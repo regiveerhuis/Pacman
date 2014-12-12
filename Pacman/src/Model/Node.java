@@ -27,6 +27,13 @@ public class Node extends TraversableCell{
     public Direction[] getPossibleDirections() {
         return (Direction[]) paths.keySet().toArray();
     }
-    
+
+    public void setPath(Direction direction, Path path) {
+        paths.put(direction, path);
+    }
+
+    public boolean pathValid(Direction direction){
+        return paths.containsKey(direction) && paths.get(direction) != null;
+    }
    
 }
