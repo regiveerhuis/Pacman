@@ -9,6 +9,7 @@ import Model.Cell;
 import Model.Direction;
 import Model.Node;
 import Model.Path;
+import Model.PathPiece;
 import Model.PlayGround;
 import Model.TraversableCell;
 import Model.Wall;
@@ -45,8 +46,7 @@ public class LevelData {
             LevelData levelData = levels.get(level);
             boolean[][] cellData = levelData.cellData;
             Cell[][] cells = createNodes(cellData);
-            
-            
+
         } else {
             throw new IllegalArgumentException();
         }
@@ -83,7 +83,7 @@ public class LevelData {
                     //if you're not on the bottom and the cell under you is not a wall, add a neighbour
                     if (j + 1 < cellData[i].length && cellData[i][j + 1]) {
                         directions.put(Direction.SOUTH, null);
-                        
+
                     }
 
                     if (directions.size() != 2) {
@@ -92,19 +92,165 @@ public class LevelData {
                 }
             }
         }
-        
+
         return cells;
     }
-    
-    
+
     //fill nulls with pathpieces, and init the paths of the nodes
-    private static void initPaths(Cell[][] nodes, boolean[][] cellData){
-        
+    private static void initPaths(Cell[][] nodes, boolean[][] cellData) {
+
+    }
+
+    //makes, fills and returns a path.
+    private static void initNodePaths(Node node, Cell[][] cells, boolean[][] cellData) {
         
     }
-    
-    //makes, fills and returns a path.
-    private static Path initNodePaths(Node node, Cell[][] cells, boolean[][] cellData){
+
+    private static Path makeNodePath(Node node, Cell[][] cells, boolean[][] cellData, Direction direction) {
+        Node startNode = node;
+        HashMap<int[], Direction> pathPieceLocations = new HashMap<>();
+
+        Direction prevDirection = direction;
+        int curX = node.getPositionX();
+        int curY = node.getPositionY();
+       Node endNode = null;
+
+        while (endNode == null) {
+            switch (direction) {
+                case NORTH:
+                    curY++;
+                    int[] arr1 = {curX, curY};
+
+                    if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
+                        endNode = (Node) cells[curX][curY];
+
+                    } else {
+                        pathPieceLocations.put(arr1, direction);
+                    }
+                    break;
+                    
+                case SOUTH:
+                    curY--;
+                    int[] arr2 = {curX, curY};
+                    if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
+                        endNode = (Node) cells[curX][curY];
+
+                    } else {
+                        pathPieceLocations.put(arr2, direction);
+                    }
+                    break;
+                    
+                case EAST:
+                    int[] arr3 = {curX, curY};
+                    curX++;
+                    if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
+                        endNode = (Node) cells[curX][curY];
+                    } else {
+                        pathPieceLocations.put(arr3, direction);
+                    }
+                    break;
+                    
+                case WEST:
+                    curX--;
+                    int[] arr4 = {curX, curY};
+                    if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
+                        endNode = (Node) cells[curX][curY];
+                    } else {
+                        pathPieceLocations.put(arr4, direction);
+                    }
+                    break;
+            }
+            
+            if(endNode == null){
+                
+            }
+        }
+        
+        return new Path(node, endNode, null);
+    }
+
+    private static PathPiece makePathPiece(int x, int y, Direction prevDirection, boolean[][] cellData, Path path) {
+        ArrayList<Direction> possDirections = getNextDirections(x, y, cellData, prevDirection);
+        if (possDirections.size() > 1) {
+            return null;
+        } else {
+            return new PathPiece(x, y, path, possDirections.get(0), prevDirection);
+        }
+    }
+
+    private static Direction getNextDirection(PathPiece pathPiece, boolean[][] cellData, Direction prevDirection) {
+        for (Direction direction : Direction.values()) {
+            if (direction != prevDirection) {
+                try {
+                    switch (direction) {
+                        case NORTH:
+                            if (cellData[pathPiece.getPositionX()][pathPiece.getPositionY() + 1]) {
+                                return direction;
+                            }
+                            break;
+
+                        case SOUTH:
+                            if (cellData[pathPiece.getPositionX()][pathPiece.getPositionY() - 1]) {
+                                return direction;
+                            }
+                            break;
+
+                        case EAST:
+                            if (cellData[pathPiece.getPositionX() + 1][pathPiece.getPositionY()]) {
+                                return direction;
+                            }
+                            break;
+                        case WEST:
+                            if (cellData[pathPiece.getPositionX() - 1][pathPiece.getPositionY()]) {
+                                return direction;
+                            }
+                            break;
+
+                    }
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+        }
         return null;
     }
+
+    private static ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
+        ArrayList<Direction> directions = new ArrayList<Direction>();
+        for (Direction direction : Direction.values()) {
+            if (direction != prevDirection) {
+                try {
+                    switch (direction) {
+                        case NORTH:
+                            if (cellData[x][y + 1]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                        case SOUTH:
+                            if (cellData[x][y - 1]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                        case EAST:
+                            if (cellData[x + 1][y]) {
+                                directions.add(direction);
+                            }
+                            break;
+                        case WEST:
+                            if (cellData[x - 1][y]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                    }
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+        }
+        return directions;
+    }
+
 }
