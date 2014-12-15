@@ -15,13 +15,23 @@ import java.awt.event.KeyEvent;
 public class Pacman extends MovingElement {
     private Direction nextDirection;
     private Direction curDirection;
+    private TraversableCell curCell;
     
     public Pacman() {
         
     }
     
-    public void KeyPressed (KeyEvent e) {
-        
+    public void KeyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP: 
+                setNextDirection(Direction.NORTH);
+            case KeyEvent.VK_RIGHT:
+                setNextDirection(Direction.EAST);
+            case KeyEvent.VK_DOWN:
+                setNextDirection(Direction.SOUTH);
+            case KeyEvent.VK_LEFT:
+                setNextDirection(Direction.WEST);
+        }
     }
     
     public void KeyTyped (KeyEvent e) {
@@ -30,6 +40,43 @@ public class Pacman extends MovingElement {
     
     public void KeyReleased (KeyEvent e) {
         
+    }
+    
+    public void setNextDirection (Direction d) {
+        nextDirection = d;
+    }
+    
+    public Direction getNextDirection () {
+        return nextDirection;
+    }
+    
+    public void setCurDirection (Direction d) {
+        curDirection = d;
+    }
+    
+    @Override
+    public Direction getCurDirection() {
+        return curDirection;
+    }
+    
+    public void tryNextMove() {
+        Direction nextMove = null;
+        
+        for(Direction d : curCell.getPossibleDirections()) {
+            if(d == nextDirection) {
+                nextMove = nextDirection;
+            }
+        }
+        
+        if(nextMove != null) {
+            move(nextMove);
+        } else {
+            for(Direction d : curCell.getPossibleDirections()) {
+                if(d == curDirection) {
+                    move(curDirection);
+                }
+            }
+        }
     }
     
     @Override
@@ -43,13 +90,8 @@ public class Pacman extends MovingElement {
     }
     
     @Override
-    public void move (Direction direction) {
-        
-    }
-    
-    @Override
-    public Direction getDirection() {
-        return curDirection;
+    public void move (Direction d) {
+        curCell = curCell.TryMove(d);
     }
     
     @Override

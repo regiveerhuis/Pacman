@@ -17,8 +17,8 @@ public abstract class MovingElement extends GameElement implements ActionListene
     @Override
     public abstract void actionPerformed (ActionEvent e);
     
-    public abstract void move (Direction direction);
+    public abstract void move (Direction d);
     
-    public abstract Direction getDirection ();
+    public abstract Direction getCurDirection ();
     
 }

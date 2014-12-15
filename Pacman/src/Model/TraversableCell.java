@@ -6,6 +6,9 @@
 
 package Model;
 
+import java.awt.Graphics;
+import java.util.List;
+
 /**
  *
  * @author Regi
@@ -16,4 +19,15 @@ public class TraversableCell extends Cell {
         super(positionX, positionY);
     }
     
+    public Direction[] getPossibleDirections() {
+        return null;
+    }
+    
+    public TraversableCell TryMove (Direction d) {
+        return null;
+    }
+    
+    public void draw (Graphics g) {
+        
+    }
 }
