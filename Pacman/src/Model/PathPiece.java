@@ -6,6 +6,8 @@
 
 package Model;
 
+import java.awt.Graphics;
+
 /**
  *
  * @author Regi
@@ -22,6 +24,32 @@ public class PathPiece extends TraversableCell {
         this.path = path;
     }
  
+    @Override
+    public Direction[] getPossibleDirections(){
+        return new Direction[]{forwardDirection, backwardDirection};
+    }
+    
+    @Override
+    public TraversableCell tryMove(Direction direction){
+        if(direction == forwardDirection){
+            return path.getNextTraversableCell(this);
+        }else if(direction == backwardDirection){
+            return path.getPreviousTraversableCell(this);
+        }else{
+            return null;
+        }
+    }
+    
+    @Override
+    public void draw(Graphics g){
+        super.draw(g);
+        g.translate(positionX * CELL_SIZE, positionY* CELL_SIZE);
+        
+        g.drawString("F: " +forwardDirection, 5 , 5);
+        g.drawString("B:"+ backwardDirection, 5 , 15);
+        g.translate(-positionX* CELL_SIZE, -positionY* CELL_SIZE);
+    }
+    
     @Override
     public String toString(){
         return "pathpiece to " + forwardDirection + " and "+ backwardDirection;

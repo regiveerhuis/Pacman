@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  *
@@ -25,15 +28,15 @@ import java.util.EnumMap;
  */
 public class LevelData {
 
-    private static Map<Level, LevelData> levels = new HashMap<Level, LevelData>();
+    private static Map<Level, LevelData> levels = new EnumMap<Level, LevelData>(Level.class);
 
     static {
         boolean[][] levelMap = {
             {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false},
-            {false, true,   true,  true,   true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
+            {false, true,   true,  true,   true,    true,   false,  true,   false,   true,   true,   true,   true,   false},
             {false, true,   false, true,   false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
             {false, true,   true,  true,   false,   true,   false,  false,  true,   true,   true,   false,  true,   false},
-            {false, true,   false, true,   false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
+            {false, true,   false, true,   false,   true,   true,   true,   false,   false,  true,   false,  true,   false},
             {false, true,   true,  true,   true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
             {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false}
         };
@@ -54,11 +57,6 @@ public class LevelData {
     private int startPositionGhostX;
     private int startPositionGhostY;
 
-    public static void main(String[] args) {
-        PlayGround playGround = getPlayGround(Level.Level);
-        Cell[][] cells = playGround.getCells();
-    }
-
     private LevelData(boolean[][] cellData, int startPacmanX, int startPacmanY, int startGhostX, int startGhostY) {
         this.cellData = cellData;
         this.startPositionGhostX = startGhostX;
@@ -67,7 +65,7 @@ public class LevelData {
         this.startPositionPacmanY = startPacmanY;
     }
 
-    public static PlayGround getPlayGround(Level level) {
+    public static PlayGround loadPlayGround(Level level, Game game) {
         if (levels.containsKey(level)) {
             LevelData levelData = levels.get(level);
             boolean[][] cellData = levelData.cellData;
@@ -77,8 +75,10 @@ public class LevelData {
             
             TraversableCell pacmanStartCell = (TraversableCell) cells[levelData.startPositionPacmanX][levelData.startPositionPacmanY];
             
-            pacmanStartCell.addMover(new Pacman(pacmanStartCell));
-            
+            Pacman pacman = new Pacman(pacmanStartCell);
+            pacmanStartCell.addMover(pacman);
+            game.addKeyListener(pacman);
+            game.addTimerListener(pacman);
             TraversableCell ghostStartCell = (TraversableCell) cells[levelData.startPositionGhostX][levelData.startPositionGhostY];
             
             
@@ -154,7 +154,8 @@ public class LevelData {
 
     private static Path makeNodePath(Node node, Cell[][] cells, boolean[][] cellData, Direction direction) {
         Node startNode = node;
-        HashMap<int[], Direction[]> pathPieceLocations = new HashMap<>();
+        Stack<int[]> pathPieceLocations = new Stack<>();
+        Stack<Direction[]> pathPieceDirections = new Stack<>();
         Direction firstDirection = direction;
         Direction prevDirection = direction;
         int curX = node.getPositionX();
@@ -189,17 +190,20 @@ public class LevelData {
                 prevDirection = direction;
                 direction = getNextDirections(curX, curY, cellData, direction).get(0);
                 Direction[] dir = {prevDirection.inverse(), direction};
-                pathPieceLocations.put(arr, dir);
-
+                pathPieceLocations.add(arr);
+                pathPieceDirections.add(dir);
             }
         }
 
         ArrayList<PathPiece> pathPieces = new ArrayList();
-        Path path = new Path(node, endNode, pathPieces);
+        Path path = new Path(endNode, node, pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
         node.setPath(firstDirection, path);
-        for (int[] location : pathPieceLocations.keySet()) {
-            PathPiece pathPiece = new PathPiece(location[0], location[1], path, pathPieceLocations.get(location)[1], pathPieceLocations.get(location)[0]);
+        while(pathPieceLocations.size() != 0) {
+            int[] locations = pathPieceLocations.pop();
+            Direction [] directions = pathPieceDirections.pop();
+            PathPiece pathPiece = new PathPiece(locations[0], locations[1], path, directions[0], directions[1]);
+            System.out.println(pathPiece.getPositionX() + ", " + pathPiece.getPositionY());
             pathPieces.add(pathPiece);
             cells[pathPiece.getPositionX()][pathPiece.getPositionY()] = pathPiece;
         }
@@ -237,7 +241,7 @@ public class LevelData {
 
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    System.out.println(e);
+                    
                 }
             }
         }

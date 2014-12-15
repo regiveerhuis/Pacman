@@ -24,11 +24,23 @@ public class Node extends TraversableCell{
     /**
      * @return the paths
      */
+    @Override
     public Direction[] getPossibleDirections() {
-        System.out.println(paths.keySet());
         return paths.keySet().toArray(new Direction[paths.keySet().size()]);
     }
 
+    @Override
+    public TraversableCell tryMove(Direction direction){
+        if(paths.containsKey(direction)){
+            if(paths.get(direction).isStartNode(this)){
+                return paths.get(direction).getNextTraversableCell(this);
+            }else if(paths.get(direction).isEndNode(this)){
+                return paths.get(direction).getPreviousTraversableCell(this);
+            }
+        }
+        return null;
+    }
+    
     public void setPath(Direction direction, Path path) {
         paths.put(direction, path);
     }

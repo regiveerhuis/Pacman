@@ -1,7 +1,6 @@
 /*
  * 
  */
-
 package View;
 
 import Game.Game;
@@ -15,14 +14,20 @@ import java.awt.Graphics;
 public class GameFrame extends javax.swing.JFrame {
 
     private Game game;
-    
+
     /**
      * Creates new form GameFrame
      */
     public GameFrame() {
+        init();
+
+    }
+
+    public void init() {
         initComponents();
-        game = new Game();
+        game = new Game(this);
         gamePanel1.setFrame(this);
+        setFocusable(true);
     }
 
     /**
@@ -204,8 +209,7 @@ public class GameFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelMenu;
     // End of variables declaration//GEN-END:variables
 
-    
-    public void drawGame(Graphics g){
+    public void drawGame(Graphics g) {
         game.draw(g);
     }
 }
