@@ -21,5 +21,9 @@ public class PathPiece extends TraversableCell {
         this.backwardDirection = backwardDirection;
         this.path = path;
     }
-    
+ 
+    @Override
+    public String toString(){
+        return "pathpiece to " + forwardDirection + " and "+ backwardDirection;
+    }
 }
