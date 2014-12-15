@@ -8,6 +8,7 @@ package Game;
 import Model.Cell;
 import Model.Direction;
 import Model.Node;
+import Model.Pacman;
 import Model.Path;
 import Model.PathPiece;
 import Model.PlayGround;
@@ -28,21 +29,23 @@ public class LevelData {
 
     static {
         boolean[][] levelMap = {
-            {false, false, false, false, false, false, false},
-            {false, true, true, true, true, true, false},
-            {false, true, false, true, false, true, false},
-            {false, true, true, true, false, true, false},
-            {false, true, false, true, false, true, false},
-            {false, true, true, true, true, true, false},
-            {false, false, false, false, false, false, false}
+            {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false},
+            {false, true,   true,  true,   true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
+            {false, true,   false, true,   false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
+            {false, true,   true,  true,   false,   true,   false,  false,  true,   true,   true,   false,  true,   false},
+            {false, true,   false, true,   false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
+            {false, true,   true,  true,   true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
+            {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false}
         };
+        
         boolean[][] transposedMap = new boolean[levelMap[0].length][levelMap.length];
         for(int i = 0; i < levelMap.length; i++){
             for(int j = 0; j < levelMap[0].length; j++){
                 transposedMap[j][i] = levelMap[i][j];
             }
         }
-        levels.put(Level.Level, new LevelData(levelMap, 2, 2, 6, 6));
+                
+        levels.put(Level.Level, new LevelData(transposedMap, 1, 1, 5, 5));
     }
 
     private boolean[][] cellData;
@@ -70,8 +73,17 @@ public class LevelData {
             boolean[][] cellData = levelData.cellData;
             Cell[][] cells = createNodes(cellData);
             initPaths(cells, cellData);
-
-            return new PlayGround(cells);
+            PlayGround playGround = new PlayGround(cells);
+            
+            TraversableCell pacmanStartCell = (TraversableCell) cells[levelData.startPositionPacmanX][levelData.startPositionPacmanY];
+            
+            pacmanStartCell.addMover(new Pacman(pacmanStartCell));
+            
+            TraversableCell ghostStartCell = (TraversableCell) cells[levelData.startPositionGhostX][levelData.startPositionGhostY];
+            
+            
+            
+            return playGround;
         } else {
             throw new IllegalArgumentException();
         }

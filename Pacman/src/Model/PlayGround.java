@@ -24,6 +24,10 @@ public class PlayGround {
     }
     
     public void draw(Graphics g){
-        
+        for(Cell[] cellArr : cells){
+            for(Cell cell : cellArr){
+                cell.draw(g);
+            }
+        }
     }
 }

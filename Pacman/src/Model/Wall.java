@@ -6,6 +6,9 @@
 
 package Model;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 /**
  *
  * @author Regi
@@ -19,5 +22,11 @@ public class Wall extends Cell {
     @Override
     public String toString(){
         return "Wall";
+    }
+    
+    @Override 
+    public void draw(Graphics g){
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(positionX*CELL_SIZE, positionY*CELL_SIZE, CELL_SIZE, CELL_SIZE);
     }
 }

@@ -6,13 +6,16 @@
 
 package Model;
 
+import java.awt.Graphics;
+
 /**
  *
  * @author Regi
  */
 public abstract class Cell {
-    private int positionX;
-    private int positionY;
+    protected int positionX;
+    protected int positionY;
+    public static final int CELL_SIZE = 50;
     
     public Cell(int positionX, int positionY){
         this.positionX = positionX;
@@ -32,4 +35,6 @@ public abstract class Cell {
     public int getPositionY() {
         return positionY;
     }
+    
+    public abstract void draw(Graphics g);
 }

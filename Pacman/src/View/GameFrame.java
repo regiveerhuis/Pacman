@@ -4,17 +4,25 @@
 
 package View;
 
+import Game.Game;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
 /**
  *
  * @author Matthias
  */
 public class GameFrame extends javax.swing.JFrame {
 
+    private Game game;
+    
     /**
      * Creates new form GameFrame
      */
     public GameFrame() {
         initComponents();
+        game = new Game();
+        gamePanel1.setFrame(this);
     }
 
     /**
@@ -26,7 +34,6 @@ public class GameFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelPlayground = new javax.swing.JPanel();
         jPanelMenu = new javax.swing.JPanel();
         jButtonPause = new javax.swing.JButton();
         jButtonReset = new javax.swing.JButton();
@@ -36,19 +43,9 @@ public class GameFrame extends javax.swing.JFrame {
         jLabelLivesText = new javax.swing.JLabel();
         jLabelScoreDisplay = new javax.swing.JLabel();
         LabelLivesDisplay = new javax.swing.JLabel();
+        gamePanel1 = new View.GamePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout jPanelPlaygroundLayout = new javax.swing.GroupLayout(jPanelPlayground);
-        jPanelPlayground.setLayout(jPanelPlaygroundLayout);
-        jPanelPlaygroundLayout.setHorizontalGroup(
-            jPanelPlaygroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 522, Short.MAX_VALUE)
-        );
-        jPanelPlaygroundLayout.setVerticalGroup(
-            jPanelPlaygroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 392, Short.MAX_VALUE)
-        );
 
         jButtonPause.setText("Pause");
 
@@ -120,26 +117,36 @@ public class GameFrame extends javax.swing.JFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout gamePanel1Layout = new javax.swing.GroupLayout(gamePanel1);
+        gamePanel1.setLayout(gamePanel1Layout);
+        gamePanel1Layout.setHorizontalGroup(
+            gamePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        gamePanel1Layout.setVerticalGroup(
+            gamePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 415, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelPlayground, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanelInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
+                        .addComponent(jPanelInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gamePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelPlayground, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(gamePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanelMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanelInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -186,6 +193,7 @@ public class GameFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LabelLivesDisplay;
+    private View.GamePanel gamePanel1;
     private javax.swing.JButton jButtonPause;
     private javax.swing.JButton jButtonReset;
     private javax.swing.JButton jButtonStop;
@@ -194,6 +202,10 @@ public class GameFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelScoreText;
     private javax.swing.JPanel jPanelInfo;
     private javax.swing.JPanel jPanelMenu;
-    private javax.swing.JPanel jPanelPlayground;
     // End of variables declaration//GEN-END:variables
+
+    
+    public void drawGame(Graphics g){
+        game.draw(g);
+    }
 }

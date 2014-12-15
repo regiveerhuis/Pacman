@@ -5,6 +5,7 @@
 package Model;
 
 import View.RedrawEvent;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -16,9 +17,11 @@ public class Pacman extends MovingElement {
     private Direction nextDirection;
     private Direction curDirection;
     private TraversableCell curCell;
+    private TraversableCell startPosition;
     
-    public Pacman() {
-        
+    public Pacman(TraversableCell startCell) {
+        curCell = startCell;
+        startPosition = startCell;
     }
     
     public void KeyPressed(KeyEvent e) {
@@ -81,7 +84,8 @@ public class Pacman extends MovingElement {
     
     @Override
     public void draw (Graphics g) {
-        
+        g.setColor(Color.YELLOW);
+        g.fillOval(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10);
     }
     
     @Override

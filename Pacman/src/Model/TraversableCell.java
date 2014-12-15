@@ -6,7 +6,9 @@
 
 package Model;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class TraversableCell extends Cell {
 
+    private ArrayList<MovingElement> movers = new ArrayList();
+    
     public TraversableCell(int positionX, int positionY) {
         super(positionX, positionY);
     }
@@ -28,6 +32,18 @@ public class TraversableCell extends Cell {
     }
     
     public void draw (Graphics g) {
+        g.setColor(Color.BLACK);
+        g.translate(positionX*CELL_SIZE, positionY*CELL_SIZE);
+        g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
         
+        for(MovingElement mover : movers){
+            mover.draw(g);
+        }
+        g.translate(-positionX*CELL_SIZE, -positionY*CELL_SIZE);
     }
+    
+    public void addMover(MovingElement mover){
+        movers.add(mover);
+    }
+    
 }
