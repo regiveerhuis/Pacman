@@ -13,8 +13,12 @@ import java.awt.Graphics;
  * @author Regi
  */
 public class PlayGround {
- private Cell[][] cells;   
+    private Cell[][] cells;   
  
+    public Cell[][] getCells(){
+        return cells;
+    }
+    
     public PlayGround(Cell[][] cells){
         this.cells = cells;
     }

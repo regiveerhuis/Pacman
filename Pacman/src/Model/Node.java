@@ -25,7 +25,8 @@ public class Node extends TraversableCell{
      * @return the paths
      */
     public Direction[] getPossibleDirections() {
-        return (Direction[]) paths.keySet().toArray();
+        System.out.println(paths.keySet());
+        return paths.keySet().toArray(new Direction[paths.keySet().size()]);
     }
 
     public void setPath(Direction direction, Path path) {
@@ -36,4 +37,12 @@ public class Node extends TraversableCell{
         return paths.containsKey(direction) && paths.get(direction) != null;
     }
    
+    @Override
+    public String toString(){
+        String r = "node"; 
+        for(Direction d : paths.keySet()){
+           r+= ", " + d.toString().charAt(0);
+        }
+        return r;
+    }
 }

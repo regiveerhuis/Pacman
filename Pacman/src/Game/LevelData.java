@@ -28,15 +28,21 @@ public class LevelData {
 
     static {
         boolean[][] levelMap = {
-                    {false,false,false,false,false,false,false},
-                    {false,true,true,true,true,true,false},
-                    {false,true,false,true,false,true,false},
-                    {false,true,true,true,false,true,false},
-                    {false,true,false,true,false,true,false},
-                    {false,true,true,true,true,true,false},
-                    {false,false,false,false,false,false,false}
-                };
-        levels.put(Level.Level, new LevelData( levelMap, 2, 2, 6, 6));
+            {false, false, false, false, false, false, false},
+            {false, true, true, true, true, true, false},
+            {false, true, false, true, false, true, false},
+            {false, true, true, true, false, true, false},
+            {false, true, false, true, false, true, false},
+            {false, true, true, true, true, true, false},
+            {false, false, false, false, false, false, false}
+        };
+        boolean[][] transposedMap = new boolean[levelMap[0].length][levelMap.length];
+        for(int i = 0; i < levelMap.length; i++){
+            for(int j = 0; j < levelMap[0].length; j++){
+                transposedMap[j][i] = levelMap[i][j];
+            }
+        }
+        levels.put(Level.Level, new LevelData(levelMap, 2, 2, 6, 6));
     }
 
     private boolean[][] cellData;
@@ -45,7 +51,12 @@ public class LevelData {
     private int startPositionGhostX;
     private int startPositionGhostY;
 
-    private LevelData(boolean[][] cellData, int startPacmanX, int startPacmanY, int startGhostX, int startGhostY){
+    public static void main(String[] args) {
+        PlayGround playGround = getPlayGround(Level.Level);
+        Cell[][] cells = playGround.getCells();
+    }
+
+    private LevelData(boolean[][] cellData, int startPacmanX, int startPacmanY, int startGhostX, int startGhostY) {
         this.cellData = cellData;
         this.startPositionGhostX = startGhostX;
         this.startPositionGhostY = startGhostY;
@@ -59,7 +70,7 @@ public class LevelData {
             boolean[][] cellData = levelData.cellData;
             Cell[][] cells = createNodes(cellData);
             initPaths(cells, cellData);
-            
+
             return new PlayGround(cells);
         } else {
             throw new IllegalArgumentException();
@@ -97,9 +108,8 @@ public class LevelData {
                         directions.put(Direction.SOUTH, null);
 
                     }
-
                     if (directions.size() != 2) {
-                        cells[i][j] = new Node(i, j, new EnumMap<Direction, Path>(Direction.class));
+                        cells[i][j] = new Node(i, j, directions);
                     }
                 }
             }
@@ -122,8 +132,10 @@ public class LevelData {
     //makes, fills and returns a path.
     private static void initNodePaths(Node node, Cell[][] cells, boolean[][] cellData) {
         for (Direction direction : node.getPossibleDirections()) {
+
             if (!node.pathValid(direction)) {
                 makeNodePath(node, cells, cellData, direction);
+
             }
         }
     }
@@ -131,7 +143,7 @@ public class LevelData {
     private static Path makeNodePath(Node node, Cell[][] cells, boolean[][] cellData, Direction direction) {
         Node startNode = node;
         HashMap<int[], Direction[]> pathPieceLocations = new HashMap<>();
-
+        Direction firstDirection = direction;
         Direction prevDirection = direction;
         int curX = node.getPositionX();
         int curY = node.getPositionY();
@@ -140,11 +152,11 @@ public class LevelData {
         while (endNode == null) {
             switch (direction) {
                 case NORTH:
-                    curY++;
+                    curY--;
                     break;
 
                 case SOUTH:
-                    curY--;
+                    curY++;
                     break;
 
                 case EAST:
@@ -163,16 +175,17 @@ public class LevelData {
 
             } else {
                 prevDirection = direction;
-                direction = getNextDirections(curY, curY, cellData, direction.inverse()).get(0);
+                direction = getNextDirections(curX, curY, cellData, direction).get(0);
                 Direction[] dir = {prevDirection.inverse(), direction};
                 pathPieceLocations.put(arr, dir);
+
             }
         }
 
         ArrayList<PathPiece> pathPieces = new ArrayList();
         Path path = new Path(node, endNode, pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
-        node.setPath(prevDirection.inverse(), path);
+        node.setPath(firstDirection, path);
         for (int[] location : pathPieceLocations.keySet()) {
             PathPiece pathPiece = new PathPiece(location[0], location[1], path, pathPieceLocations.get(location)[1], pathPieceLocations.get(location)[0]);
             pathPieces.add(pathPiece);
@@ -184,17 +197,17 @@ public class LevelData {
     private static ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
         ArrayList<Direction> directions = new ArrayList<Direction>();
         for (Direction direction : Direction.values()) {
-            if (direction != prevDirection) {
+            if (direction.inverse() != prevDirection) {
                 try {
                     switch (direction) {
                         case NORTH:
-                            if (cellData[x][y + 1]) {
+                            if (cellData[x][y - 1]) {
                                 directions.add(direction);
                             }
                             break;
 
                         case SOUTH:
-                            if (cellData[x][y - 1]) {
+                            if (cellData[x][y + 1]) {
                                 directions.add(direction);
                             }
                             break;
@@ -212,7 +225,7 @@ public class LevelData {
 
                     }
                 } catch (IndexOutOfBoundsException e) {
-
+                    System.out.println(e);
                 }
             }
         }
