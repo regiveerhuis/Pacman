@@ -32,13 +32,14 @@ public class LevelData {
 
     static {
         boolean[][] levelMap = {
-            {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false},
-            {false, true,   true,  true,   true,    true,   false,  true,   false,   true,   true,   true,   true,   false},
-            {false, true,   false, true,   false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
-            {false, true,   true,  true,   false,   true,   false,  false,  true,   true,   true,   false,  true,   false},
-            {false, true,   false, true,   false,   true,   true,   true,   false,   false,  true,   false,  true,   false},
-            {false, true,   true,  true,   true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
-            {false, false,  false, false,  false,   false,  false,  false,  false,  false,  false,  false,  false,  false}
+            //       0      1      2      3      4        5       6       7       8       9       10      11      12      13      
+            /*0*/   {false, false, false, false, false,   false,  false,  false,  false,  false,  false,  false,  false,  false},
+            /*1*/   {false, true,  true,  true,  true,    true,   false,  true,   false,  true,   true,   true,   true,   false},
+            /*2*/   {false, true,  false, true,  false,   true,   true,   true,   true,   false,  true,   false,  true,   false},
+            /*3*/   {false, true,  true,  true,  false,   true,   false,  false,  true,   true,   true,   false,  true,   false},
+            /*4*/   {false, true,  false, true,  false,   true,   true,   true,   false,  false,  true,   false,  true,   false},
+            /*5*/   {false, true,  true,  true,  true,    true,   false,  true,   true,   true,   true,   true,   true,   false},
+            /*6*/   {false, false, false, false, false,   false,  false,  false,  false,  false,  false,  false,  false,  false}
         };
         
         boolean[][] transposedMap = new boolean[levelMap[0].length][levelMap.length];
@@ -47,17 +48,19 @@ public class LevelData {
                 transposedMap[j][i] = levelMap[i][j];
             }
         }
-                
-        levels.put(Level.Level, new LevelData(transposedMap, 1, 1, 5, 5));
+         
+        int[] startPosGhostX = {4, 9, 9, 12};
+        int[] startPosGhostY = {5, 5, 1, 3};
+        levels.put(Level.Level, new LevelData(transposedMap, 1, 1, startPosGhostX, startPosGhostY));
     }
 
     private boolean[][] cellData;
     private int startPositionPacmanX;
     private int startPositionPacmanY;
-    private int startPositionGhostX;
-    private int startPositionGhostY;
+    private int[] startPositionGhostX;
+    private int[] startPositionGhostY;
 
-    private LevelData(boolean[][] cellData, int startPacmanX, int startPacmanY, int startGhostX, int startGhostY) {
+    private LevelData(boolean[][] cellData, int startPacmanX, int startPacmanY, int[] startGhostX, int[] startGhostY) {
         this.cellData = cellData;
         this.startPositionGhostX = startGhostX;
         this.startPositionGhostY = startGhostY;
@@ -79,8 +82,11 @@ public class LevelData {
             pacmanStartCell.addMover(pacman);
             game.addKeyListener(pacman);
             game.addTimerListener(pacman);
-            TraversableCell ghostStartCell = (TraversableCell) cells[levelData.startPositionGhostX][levelData.startPositionGhostY];
-            
+            TraversableCell[] ghostStartCell = new TraversableCell[levelData.startPositionGhostX.length];
+            for(int i = 0 ;i < levelData.startPositionGhostX.length; i++){
+                ghostStartCell[i] = (TraversableCell) cells[levelData.startPositionGhostX[i]][levelData.startPositionGhostY[i]];
+            }
+            //ghostStartCell.add
             
             
             return playGround;
@@ -156,14 +162,15 @@ public class LevelData {
         Node startNode = node;
         Stack<int[]> pathPieceLocations = new Stack<>();
         Stack<Direction[]> pathPieceDirections = new Stack<>();
-        Direction firstDirection = direction;
+        
+        Direction curDirection = direction;
         Direction prevDirection = direction;
         int curX = node.getPositionX();
         int curY = node.getPositionY();
         Node endNode = null;
 
         while (endNode == null) {
-            switch (direction) {
+            switch (curDirection) {
                 case NORTH:
                     curY--;
                     break;
@@ -187,23 +194,25 @@ public class LevelData {
                 endNode = (Node) cells[curX][curY];
 
             } else {
-                prevDirection = direction;
-                direction = getNextDirections(curX, curY, cellData, direction).get(0);
-                Direction[] dir = {prevDirection.inverse(), direction};
+                prevDirection = curDirection;
+                curDirection = getNextDirections(curX, curY, cellData, direction).get(0);
+                Direction[] dir = {curDirection, prevDirection.inverse()};
                 pathPieceLocations.add(arr);
                 pathPieceDirections.add(dir);
             }
         }
 
         ArrayList<PathPiece> pathPieces = new ArrayList();
-        Path path = new Path(endNode, node, pathPieces);
+        Path path = new Path(node, endNode, pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
-        node.setPath(firstDirection, path);
+        node.setPath(direction, path);
+        System.out.println("Startnode at " + node.getPositionX() + ", " + node.getPositionY() + " has path pointing to " + direction);
+        System.out.println("Endnode at " + endNode.getPositionX() + ", " + endNode.getPositionY() + " has path pointing to " + prevDirection.inverse());
         while(pathPieceLocations.size() != 0) {
             int[] locations = pathPieceLocations.pop();
             Direction [] directions = pathPieceDirections.pop();
             PathPiece pathPiece = new PathPiece(locations[0], locations[1], path, directions[0], directions[1]);
-            System.out.println(pathPiece.getPositionX() + ", " + pathPiece.getPositionY());
+            
             pathPieces.add(pathPiece);
             cells[pathPiece.getPositionX()][pathPiece.getPositionY()] = pathPiece;
         }
