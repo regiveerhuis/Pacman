@@ -28,7 +28,7 @@ public class Game implements ActionListener {
     public Game(GameFrame gameFrame) {
         this.gameFrame = gameFrame;
         timer = new Timer(moveSpeed, this);
-        playGround = LevelData.loadPlayGround(Level.Level, this);
+        playGround = new PlayGround(LevelData.getLevelData(Level.Level), this);
         
     }
     

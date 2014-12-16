@@ -7,7 +7,9 @@
 package Model;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  *
@@ -20,7 +22,7 @@ public class Node extends TraversableCell{
         super(positionX, positionY);
         this.paths = paths;
     }
-
+    
     /**
      * @return the paths
      */
@@ -56,5 +58,110 @@ public class Node extends TraversableCell{
            r+= ", " + d.toString().charAt(0);
         }
         return r;
+    }
+    
+     //makes, fills and returns a path.
+    public void initNode(Cell[][] cells, boolean[][] cellData) {
+        for (Direction direction : getPossibleDirections()) {
+
+            if (!pathValid(direction)) {
+                makeNodePath(cells, cellData, direction);
+            }
+        }
+    }
+    
+    private void makeNodePath(Cell[][] cells, boolean[][] cellData, Direction direction) {
+        Stack<int[]> pathPieceLocations = new Stack<>();
+        Stack<Direction[]> pathPieceDirections = new Stack<>();
+
+        Direction curDirection = direction;
+        Direction prevDirection = direction;
+        int curX = getPositionX();
+        int curY = getPositionY();
+        Node endNode = null;
+
+        while (endNode == null) {
+            switch (curDirection) {
+                case NORTH:
+                    curY--;
+                    break;
+
+                case SOUTH:
+                    curY++;
+                    break;
+
+                case EAST:
+                    curX++;
+                    break;
+
+                case WEST:
+                    curX--;
+                    break;
+            }
+
+            int[] arr = {curX, curY};
+            prevDirection = curDirection;
+            if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
+                endNode = (Node) cells[curX][curY];
+
+            } else {
+                curDirection = getNextDirections(curX, curY, cellData, curDirection).get(0);
+                Direction[] dir = {prevDirection.inverse(), curDirection};
+                pathPieceLocations.add(arr);
+                pathPieceDirections.add(dir);
+            }
+        }
+
+        ArrayList<PathPiece> pathPieces = new ArrayList();
+        Path path = new Path(endNode, this, pathPieces);
+        endNode.setPath(prevDirection.inverse(), path);
+        setPath(direction, path);
+        
+        while (pathPieceLocations.size() != 0) {
+            int[] locations = pathPieceLocations.pop();
+            Direction[] directions = pathPieceDirections.pop();
+            PathPiece pathPiece = new PathPiece(locations[0], locations[1], path, directions[0], directions[1]);
+
+            pathPieces.add(pathPiece);
+            cells[pathPiece.getPositionX()][pathPiece.getPositionY()] = pathPiece;
+        }
+    }
+    
+    private ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
+        ArrayList<Direction> directions = new ArrayList<Direction>();
+        for (Direction direction : Direction.values()) {
+            if (direction.inverse() != prevDirection) {
+                try {
+                    switch (direction) {
+                        case NORTH:
+                            if (cellData[x][y - 1]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                        case SOUTH:
+                            if (cellData[x][y + 1]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                        case EAST:
+                            if (cellData[x + 1][y]) {
+                                directions.add(direction);
+                            }
+                            break;
+                        case WEST:
+                            if (cellData[x - 1][y]) {
+                                directions.add(direction);
+                            }
+                            break;
+
+                    }
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+        }
+        return directions;
     }
 }
