@@ -19,6 +19,4 @@ public abstract class MovingElement extends GameElement implements ActionListene
     
     public abstract void move (Direction d);
     
-    public abstract Direction getCurDirection ();
-    
 }

@@ -30,10 +30,6 @@ public class Ghost extends MovingElement {
         g.fillArc(5, 5, Cell.CELL_SIZE-10, Cell.CELL_SIZE, 0, 180);
         g.fillRect(5, (Cell.CELL_SIZE / 2), Cell.CELL_SIZE-10, (Cell.CELL_SIZE/2)-10);
     }
-    
-    public Direction getCurDirection(){
-        return null;
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

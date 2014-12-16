@@ -30,16 +30,16 @@ public class Pacman extends MovingElement implements KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
-                setNextDirection(Direction.NORTH);
+                nextDirection = Direction.NORTH;
                 break;
             case KeyEvent.VK_RIGHT:
-                setNextDirection(Direction.EAST);
+                nextDirection = Direction.EAST;
                 break;
             case KeyEvent.VK_DOWN:
-                setNextDirection(Direction.SOUTH);
+                nextDirection = Direction.SOUTH;
                 break;
             case KeyEvent.VK_LEFT:
-                setNextDirection(Direction.WEST);
+                nextDirection = Direction.WEST;
                 break;
         }
     }
@@ -52,23 +52,6 @@ public class Pacman extends MovingElement implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
-    }
-
-    public void setNextDirection(Direction d) {
-        nextDirection = d;
-    }
-
-    public Direction getNextDirection() {
-        return nextDirection;
-    }
-
-    public void setCurDirection(Direction d) {
-        curDirection = d;
-    }
-
-    @Override
-    public Direction getCurDirection() {
-        return curDirection;
     }
 
     public void tryNextMove() {
@@ -95,17 +78,17 @@ public class Pacman extends MovingElement implements KeyListener {
         g.setColor(Color.YELLOW);
 
         int arcCenter = 0;
-        if(curDirection != null){
+        if (curDirection != null) {
             arcCenter = curDirection.toDegrees();
         }
 
-        if(biteFrame){
+        if (biteFrame) {
             g.fillArc(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10, arcCenter + 10, 340);
-        }else{
-        
+        } else {
+
             g.fillArc(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10, arcCenter + 45, 270);
         }
-        
+
     }
 
     @Override
