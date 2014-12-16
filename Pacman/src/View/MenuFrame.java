@@ -32,6 +32,11 @@ public class MenuFrame extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(700, 500));
 
         jButtonStartNewGame.setText("Start New Game");
+        jButtonStartNewGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonStartNewGameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -52,6 +57,12 @@ public class MenuFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonStartNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartNewGameActionPerformed
+        GameFrame gameFrame = new GameFrame();
+        gameFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonStartNewGameActionPerformed
 
     /**
      * @param args the command line arguments
