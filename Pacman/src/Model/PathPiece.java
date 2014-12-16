@@ -41,16 +41,6 @@ public class PathPiece extends TraversableCell {
     }
     
     @Override
-    public void draw(Graphics g){
-        super.draw(g);
-        g.translate(positionX * CELL_SIZE, positionY* CELL_SIZE);
-        
-        g.drawString("F: " +forwardDirection, 5 , 5);
-        g.drawString("B:"+ backwardDirection, 5 , 15);
-        g.translate(-positionX* CELL_SIZE, -positionY* CELL_SIZE);
-    }
-    
-    @Override
     public String toString(){
         return "pathpiece to " + forwardDirection + " and "+ backwardDirection;
     }

@@ -32,4 +32,19 @@ public enum Direction {
                 return null;
         }
     }
+    
+    public int toDegrees(){
+                switch (this) {
+            case NORTH:
+                return 90;
+            case SOUTH:
+                return 270;
+            case EAST:
+                return 0;
+            case WEST:
+                return 180;
+            default:
+                return 0;
+        }
+    }
 }

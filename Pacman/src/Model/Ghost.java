@@ -26,7 +26,9 @@ public class Ghost extends MovingElement {
     }
     
     public void draw(Graphics g){
-        g.fillArc(0, 0, Cell.CELL_SIZE, Cell.CELL_SIZE/2, 0, 180);
+        g.setColor(color);
+        g.fillArc(5, 5, Cell.CELL_SIZE-10, Cell.CELL_SIZE, 0, 180);
+        g.fillRect(5, (Cell.CELL_SIZE / 2), Cell.CELL_SIZE-10, (Cell.CELL_SIZE/2)-10);
     }
     
     public Direction getCurDirection(){

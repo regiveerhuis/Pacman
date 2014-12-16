@@ -7,6 +7,7 @@ package Game;
 
 import Model.Cell;
 import Model.Direction;
+import Model.Ghost;
 import Model.Node;
 import Model.Pacman;
 import Model.Path;
@@ -14,12 +15,10 @@ import Model.PathPiece;
 import Model.PlayGround;
 import Model.TraversableCell;
 import Model.Wall;
-import java.util.HashMap;
+import java.awt.Color;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -83,10 +82,12 @@ public class LevelData {
             game.addKeyListener(pacman);
             game.addTimerListener(pacman);
             TraversableCell[] ghostStartCell = new TraversableCell[levelData.startPositionGhostX.length];
+            Color[] ghostColors = {Color.ORANGE, Color.RED, Color.CYAN, Color.PINK}; //oranje rood cyaan roze
             for(int i = 0 ;i < levelData.startPositionGhostX.length; i++){
                 ghostStartCell[i] = (TraversableCell) cells[levelData.startPositionGhostX[i]][levelData.startPositionGhostY[i]];
+                ghostStartCell[i].addMover(new Ghost(ghostColors[i], ghostStartCell[i]));
             }
-            //ghostStartCell.add
+            
             
             
             return playGround;

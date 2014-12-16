@@ -19,6 +19,7 @@ public class Pacman extends MovingElement implements KeyListener {
     private Direction curDirection;
     private TraversableCell curCell;
     private TraversableCell startPosition;
+    boolean biteFrame = false;
 
     public Pacman(TraversableCell startCell) {
         curCell = startCell;
@@ -92,12 +93,23 @@ public class Pacman extends MovingElement implements KeyListener {
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.YELLOW);
-        g.fillOval(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10);
+        if(biteFrame){
+            g.fillOval(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10);
+        }else{
+        int arcCenter = 0;
+        if(curDirection != null){
+            arcCenter = curDirection.toDegrees();
+        }
+        
+        g.fillArc(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE - 10, arcCenter + 45, 270);
+        }
+        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         tryNextMove();
+        biteFrame = !biteFrame;
     }
 
     @Override

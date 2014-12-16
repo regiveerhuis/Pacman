@@ -48,19 +48,6 @@ public class Node extends TraversableCell{
     public boolean pathValid(Direction direction){
         return paths.containsKey(direction) && paths.get(direction) != null;
     }
-   
-    @Override
-    public void draw(Graphics g){
-        super.draw(g);
-        Direction[] dirs = getPossibleDirections();
-        int i = 0;
-        g.translate(positionX * CELL_SIZE, positionY * CELL_SIZE);
-        for(Direction dir : dirs){
-            g.drawString(dir.toString(), 0, i*8);
-            i++;
-        }
-        g.translate(-positionX* CELL_SIZE, -positionY* CELL_SIZE);
-    }
     
     @Override
     public String toString(){
