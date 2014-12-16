@@ -189,21 +189,21 @@ public class LevelData {
             }
 
             int[] arr = {curX, curY};
-
+            prevDirection = curDirection;
             if (cells[curX][curY] != null && cells[curX][curY] instanceof Node) {
                 endNode = (Node) cells[curX][curY];
-
+                
             } else {
-                prevDirection = curDirection;
-                curDirection = getNextDirections(curX, curY, cellData, direction).get(0);
-                Direction[] dir = {curDirection, prevDirection.inverse()};
+                curDirection = getNextDirections(curX, curY, cellData, curDirection).get(0);
+                Direction[] dir = {prevDirection.inverse(), curDirection};
                 pathPieceLocations.add(arr);
                 pathPieceDirections.add(dir);
             }
+            System.out.println(curX +  ", " + curY);
         }
 
         ArrayList<PathPiece> pathPieces = new ArrayList();
-        Path path = new Path(node, endNode, pathPieces);
+        Path path = new Path(endNode, node, pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
         node.setPath(direction, path);
         System.out.println("Startnode at " + node.getPositionX() + ", " + node.getPositionY() + " has path pointing to " + direction);
