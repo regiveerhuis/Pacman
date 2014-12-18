@@ -23,11 +23,11 @@ public class Game implements ActionListener {
     private PlayGround playGround;
     private GameFrame gameFrame;
     private Timer timer;
-    private static final int moveSpeed = 1000;
+    private static final int MOVE_SPEED = 1000;
     
     public Game(GameFrame gameFrame) {
         this.gameFrame = gameFrame;
-        timer = new Timer(moveSpeed, this);
+        timer = new Timer(MOVE_SPEED, this);
         playGround = new PlayGround(LevelData.getLevelData(Level.Level), this);
         
     }

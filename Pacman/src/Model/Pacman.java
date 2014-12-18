@@ -98,8 +98,8 @@ public class Pacman extends MovingElement implements KeyListener {
     }
 
     @Override
-    public void move(Direction d) {
-        TraversableCell newCell = curCell.tryMove(d);
+    public void move(Direction direction) {
+        TraversableCell newCell = curCell.tryMove(direction);
         System.out.println("try move");
         if (newCell != null) {
             curCell.removeMover(this);
@@ -109,8 +109,11 @@ public class Pacman extends MovingElement implements KeyListener {
         }
     }
 
+    /*
     @Override
     public void Redraw(RedrawEvent e) {
 
+    
     }
+    */
 }

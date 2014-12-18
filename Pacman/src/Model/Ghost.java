@@ -37,12 +37,14 @@ public class Ghost extends MovingElement {
     }
 
     @Override
-    public void move(Direction d) {
+    public void move(Direction direction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /*
     @Override
     public void Redraw(RedrawEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    */
 }

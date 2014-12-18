@@ -47,7 +47,7 @@ public class Node extends TraversableCell{
         paths.put(direction, path);
     }
 
-    public boolean pathValid(Direction direction){
+    private boolean isPathValid(Direction direction){
         return paths.containsKey(direction) && paths.get(direction) != null;
     }
     
@@ -64,7 +64,7 @@ public class Node extends TraversableCell{
     public void initNode(Cell[][] cells, boolean[][] cellData) {
         for (Direction direction : getPossibleDirections()) {
 
-            if (!pathValid(direction)) {
+            if (!isPathValid(direction)) {
                 makeNodePath(cells, cellData, direction);
             }
         }

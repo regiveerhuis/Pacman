@@ -26,7 +26,6 @@ public class GameFrame extends javax.swing.JFrame {
     public void init() {
         initComponents();
         game = new Game(this);
-        gamePanel1.setFrame(this);
         setFocusable(true);
     }
 

@@ -18,10 +18,6 @@ public class GamePanel extends JPanel {
 
     private GameFrame gameFrame;
     
-    public void setFrame(GameFrame gameFrame){
-        this.gameFrame = gameFrame;
-    }
-    
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);

@@ -12,7 +12,7 @@ import View.RedrawListener;
 /**
  * @author Matthias
  */
-public abstract class MovingElement extends GameElement implements ActionListener, RedrawListener {
+public abstract class MovingElement extends GameElement implements ActionListener {
     
     @Override
     public abstract void actionPerformed (ActionEvent e);
