@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package Model.Cell;
 
+import Model.Direction;
+import Model.GameElement.MovingElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,24 @@ public class PathGuide implements Guider {
 
     @Override
     public void tryMove(Direction direction, MovingElement movingElement) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (isPossibleDirection(direction)) {
+            TraversableCell nextCell;
+            if (pathPiece.isForwardDirection(direction)) {
+                nextCell = path.getNextTraversableCell(pathPiece);
+            } else {
+                nextCell = path.getPreviousTraversableCell(pathPiece);
+            }
+
+            moveToCell(movingElement, nextCell);
+        }
+    }
+
+    private void moveToCell(MovingElement movingElement, TraversableCell traversableCell) {
+        pathPiece.removeMover(movingElement);
+        traversableCell.addMover(movingElement);
+        if(traversableCell instanceof PathPiece){
+            pathPiece = (PathPiece) traversableCell;
+        }
     }
 
     @Override

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package Model;
+package Model.Cell;
 
 import java.awt.Color;
 import java.awt.Graphics;

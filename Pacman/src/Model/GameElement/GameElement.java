@@ -2,7 +2,7 @@
  * 
  */
 
-package Model;
+package Model.GameElement;
 import java.awt.Graphics;
 
 /**
@@ -11,6 +11,7 @@ import java.awt.Graphics;
 public abstract class GameElement {
     
     public abstract void draw(Graphics g);
+    
     
 }
 

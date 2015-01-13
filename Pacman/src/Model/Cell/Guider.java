@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 
-package Model;
+package Model.Cell;
 
+import Model.Direction;
+import Model.GameElement.MovingElement;
 import java.util.List;
 
 /**

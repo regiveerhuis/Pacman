@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package Model.Cell;
 
+import Model.Direction;
+import Model.GameElement.MovingElement;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -32,20 +35,12 @@ public class Node extends TraversableCell implements Guider {
         return paths.keySet().toArray(new Direction[paths.keySet().size()]);
     }
 
-    @Override
-    public TraversableCell tryMove(Direction direction) {
-        if (paths.containsKey(direction)) {
-            if (paths.get(direction).isStartNode(this)) {
-                return paths.get(direction).getNextTraversableCell(this);
-            } else if (paths.get(direction).isEndNode(this)) {
-                return paths.get(direction).getPreviousTraversableCell(this);
-            }
-        }
-        return null;
-    }
-
     public void setPath(Direction direction, Path path) {
         paths.put(direction, path);
+    }
+    
+    public Collection<Path> getPaths(){
+        return paths.values();
     }
 
     private boolean isPathValid(Direction direction) {
@@ -113,8 +108,9 @@ public class Node extends TraversableCell implements Guider {
             }
         }
 
-        ArrayList<PathPiece> pathPieces = new ArrayList();
-        Path path = new Path(endNode, this, pathPieces);
+        ArrayList<TraversableCell> pathPieces = new ArrayList();
+        
+        Path path = new Path(pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
         setPath(direction, path);
 
@@ -126,6 +122,8 @@ public class Node extends TraversableCell implements Guider {
             pathPieces.add(pathPiece);
             cells[pathPiece.getPositionX()][pathPiece.getPositionY()] = pathPiece;
         }
+        pathPieces.add(this);
+        pathPieces.add(0, endNode);
     }
 
     private ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
@@ -168,9 +166,32 @@ public class Node extends TraversableCell implements Guider {
 
     @Override
     public void tryMove(Direction direction, MovingElement movingElement) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(isPossibleDirection(direction)){
+            TraversableCell cell;
+            Path path = paths.get(direction);
+            
+            if(path.isEndNode(this)){
+                cell = path.getPreviousTraversableCell(this);
+            }else{
+                cell = path.getNextTraversableCell(this);
+            }
+            
+            cell.addMover(movingElement);
+            if(movingElement.getGuider() == this){
+                if(cell instanceof PathPiece){
+                    movingElement.setGuider(new PathGuide(path, (PathPiece) cell));
+                }
+            }
+            this.removeMover(movingElement);
+        }
     }
-
+    
+    @Override
+    public void addMover(MovingElement movingElement){
+        super.addMover(movingElement);
+        movingElement.setGuider(this);
+    }
+        
     @Override
     public TraversableCell getCurrentCell() {
         return this;

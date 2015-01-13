@@ -5,16 +5,16 @@
  */
 package Game;
 
-import Model.Cell;
+import Model.Cell.Cell;
 import Model.Direction;
-import Model.Ghost;
-import Model.Node;
-import Model.Pacman;
-import Model.Path;
-import Model.PathPiece;
+import Model.GameElement.Ghost;
+import Model.Cell.Node;
+import Model.GameElement.Pacman;
+import Model.Cell.Path;
+import Model.Cell.PathPiece;
 import Model.PlayGround;
-import Model.TraversableCell;
-import Model.Wall;
+import Model.Cell.TraversableCell;
+import Model.Cell.Wall;
 import java.awt.Color;
 import java.util.Map;
 import java.util.ArrayList;

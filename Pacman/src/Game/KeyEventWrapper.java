@@ -7,7 +7,7 @@
 package Game;
 
 import Model.Direction;
-import Model.DirectionEventListener;
+import Model.GameElement.DirectionEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;

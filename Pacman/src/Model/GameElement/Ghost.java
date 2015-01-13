@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 
-package Model;
+package Model.GameElement;
 
+import Model.Cell.Cell;
+import Model.Direction;
+import Model.Cell.TraversableCell;
 import View.RedrawEvent;
 import java.awt.Color;
 import java.awt.Graphics;

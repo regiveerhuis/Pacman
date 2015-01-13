@@ -1,8 +1,12 @@
 /*
  * 
  */
-package Model;
+package Model.GameElement;
 
+import Model.Cell.Cell;
+import Model.Direction;
+import Model.GameElement.PathingTarget;
+import Model.Cell.TraversableCell;
 import View.RedrawEvent;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -27,14 +31,15 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
     }
 
     public void tryNextMove() {
-        if (getGuider().isPossibleDirection(nextDirection)) {
-            curDirection = nextDirection;
-            nextDirection = null;
-            move(curDirection);
-        } else if (getGuider().isPossibleDirection(curDirection)) {
-            move(curDirection);
+        if (!(nextDirection == null && curDirection == null)) {
+            if (getGuider().isPossibleDirection(nextDirection)) {
+                curDirection = nextDirection;
+                nextDirection = null;
+                move(curDirection);
+            } else if (getGuider().isPossibleDirection(curDirection)) {
+                move(curDirection);
+            }
         }
-
     }
 
     @Override

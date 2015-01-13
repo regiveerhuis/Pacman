@@ -5,12 +5,23 @@
  */
 package Model;
 
+import Model.Cell.Cell;
+import Model.Cell.TraversableCell;
+import Model.Cell.PathPiece;
+import Model.Cell.Wall;
+import Model.Cell.Node;
+import Model.Cell.PathGuide;
+import Model.Cell.Path;
+import Model.GameElement.Pacman;
+import Model.GameElement.Ghost;
 import Game.Game;
 import Game.KeyEventWrapper;
 import Game.LevelData;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -19,6 +30,7 @@ import java.util.EnumMap;
 public class PlayGround {
 
     private Cell[][] cells;
+    private HashSet<Path> paths = new HashSet();
 
     public Cell[][] getCells() {
         return cells;
@@ -28,10 +40,23 @@ public class PlayGround {
         boolean[][] cellData = levelData.getCellData();
         cells = new Cell[cellData.length][cellData[0].length];
         createNodes(cellData);
+        indexPaths();
 
         TraversableCell pacmanStartCell = (TraversableCell) cells[levelData.getStartPositionPacmanX()][levelData.getStartPositionPacmanY()];
-
         Pacman pacman = new Pacman(pacmanStartCell);
+        if (pacmanStartCell instanceof Node) {
+            pacman.setGuider((Node) pacmanStartCell);
+        } else {
+            System.out.println("pathamount: "  + paths.size());
+            for (Path path : paths) {
+                if (path.containsCell(pacmanStartCell))
+                {
+                    pacman.setGuider(new PathGuide(path, (PathPiece) pacmanStartCell));
+                    System.out.println("found him");
+                    break;
+                }
+            }
+        }
         pacmanStartCell.addMover(pacman);
         KeyEventWrapper keyEventWrapper = new KeyEventWrapper();
         keyEventWrapper.addListener(pacman);
@@ -39,9 +64,22 @@ public class PlayGround {
         game.addTimerListener(pacman);
         TraversableCell[] ghostStartCell = new TraversableCell[levelData.getStartPositionGhostX().length];
         Color[] ghostColors = {Color.ORANGE, Color.RED, Color.CYAN, Color.PINK}; //oranje rood cyaan roze
+      
         for (int i = 0; i < levelData.getStartPositionGhostX().length; i++) {
             ghostStartCell[i] = (TraversableCell) cells[levelData.getStartPositionGhostX()[i]][levelData.getStartPositionGhostY()[i]];
-            ghostStartCell[i].addMover(new Ghost(ghostColors[i], ghostStartCell[i]));
+            Ghost ghost = new Ghost(ghostColors[i], ghostStartCell[i]);
+            ghostStartCell[i].addMover(ghost);
+            if (ghostStartCell[i] instanceof Node) {
+                ghost.setGuider((Node) ghostStartCell[i]);
+            } else {
+                for (Path path : paths) {
+                    if (path.containsCell(ghostStartCell[i]));
+                    {
+                        ghost.setGuider(new PathGuide(path, (PathPiece) ghostStartCell[i]));
+                        break;
+                    }
+                }
+            }
         }
 
     }
@@ -49,9 +87,9 @@ public class PlayGround {
     public void draw(Graphics g) {
         for (Cell[] cellArr : cells) {
             for (Cell cell : cellArr) {
-                
-                    cell.draw(g);
-                
+
+                cell.draw(g);
+
             }
         }
     }
@@ -88,22 +126,29 @@ public class PlayGround {
                     }
 
                     if (directions.size() != 2) {
-                        System.out.println("hallo1");
                         cells[i][j] = new Node(i, j, directions);
-                        System.out.println("hallo2");
                     }
                 }
             }
         }
-        
-            for (Cell[] cellArr : cells) {
-                for (Cell cell : cellArr) {
-                    if (cell instanceof Node) {
-                        ((Node) cell).initNode(cells, cellData);
-                    }
+
+        for (Cell[] cellArr : cells) {
+            for (Cell cell : cellArr) {
+                if (cell instanceof Node) {
+                    ((Node) cell).initNode(cells, cellData);
                 }
             }
+        }
 
     }
 
+    private void indexPaths() {
+        for (Cell[] c : cells) {
+            for (Cell cell : c) {
+                if (cell instanceof Node) {
+                    paths.addAll(((Node) cell).getPaths());
+                }
+            }
+        }
+    }
 }

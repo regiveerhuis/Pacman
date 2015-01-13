@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package Model.Cell;
 
+import Model.Direction;
+import Model.GameElement.MovingElement;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -24,8 +26,6 @@ public abstract class TraversableCell extends Cell {
 
     public abstract Direction[] getPossibleDirections();
 
-    public abstract TraversableCell tryMove(Direction direction);
-
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
         g.translate(positionX * CELL_SIZE, positionY * CELL_SIZE);
@@ -42,5 +42,9 @@ public abstract class TraversableCell extends Cell {
 
     public void removeMover(MovingElement mover) {
         movers.remove(mover);
+    }
+
+    boolean isPossibleDirection(Direction direction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

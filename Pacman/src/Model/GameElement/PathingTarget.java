@@ -4,12 +4,15 @@
  * and open the template in the editor.
  */
 
-package Model;
+package Model.GameElement;
+
+import Model.Cell.Guider;
 
 /**
  *
  * @author Regi
  */
-public interface DirectionEventListener {
-    public void directionEvent(Direction direction);
+public interface PathingTarget {
+    public boolean moveTo();
+    public Guider getGuider();
 }

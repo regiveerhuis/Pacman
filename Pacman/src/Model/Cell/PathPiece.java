@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package Model;
+package Model.Cell;
 
+import Model.Direction;
 import java.awt.Graphics;
 
 /**
@@ -15,13 +16,11 @@ import java.awt.Graphics;
 public class PathPiece extends TraversableCell {
     private Direction forwardDirection;
     private Direction backwardDirection;
-    private Path path;
 
     public PathPiece(int positionX, int positionY, Path path, Direction forwardDirection, Direction backwardDirection) {
         super(positionX, positionY);
         this.forwardDirection = forwardDirection;
         this.backwardDirection = backwardDirection;
-        this.path = path;
     }
  
     @Override
@@ -30,22 +29,15 @@ public class PathPiece extends TraversableCell {
     }
     
     @Override
-    public TraversableCell tryMove(Direction direction){
-        if(direction == forwardDirection){
-            return path.getNextTraversableCell(this);
-        }else if(direction == backwardDirection){
-            return path.getPreviousTraversableCell(this);
-        }else{
-            return null;
-        }
-    }
-    
-    @Override
     public String toString(){
         return "pathpiece to " + forwardDirection + " and "+ backwardDirection;
     }
 
     boolean isPossibleDirection(Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return direction == forwardDirection || direction == backwardDirection;
+    }
+    
+    boolean isForwardDirection(Direction direction){
+        return direction == forwardDirection;
     }
 }

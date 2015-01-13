@@ -2,8 +2,10 @@
  * 
  */
 
-package Model;
+package Model.GameElement;
 
+import Model.Direction;
+import Model.Cell.Guider;
 import View.RedrawEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,5 +27,9 @@ public abstract class MovingElement extends GameElement implements ActionListene
     public Guider getGuider() {
         return guider;
     } 
+
+    public void setGuider(Guider guider) {
+       this.guider = guider;
+    }
         
 }
