@@ -3,16 +3,13 @@
  */
 package Model.GameElement;
 
+import Game.Player;
 import Model.Cell.Cell;
 import Model.Direction;
-import Model.GameElement.PathingTarget;
 import Model.Cell.TraversableCell;
-import View.RedrawEvent;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * @author Matthias
@@ -21,13 +18,14 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     private Direction nextDirection;
     private Direction curDirection;
-
     private TraversableCell startPosition;
-    boolean biteFrame = false;
+    private boolean biteFrame = false;
     private boolean invincible;
+    private Player player;
 
-    public Pacman(TraversableCell startCell) {
+    public Pacman(TraversableCell startCell, Player player) {
         startPosition = startCell;
+        this.player = player;
     }
 
     public void tryNextMove() {
@@ -92,6 +90,34 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
     @Override
     public boolean moveTo() {
         return !invincible;
+    }
+
+    @Override
+    public GameElementDeathEvent moverEnteredCell(MovingElement mover) {
+        if (mover instanceof Ghost) {
+            if (invincible) {
+                mover.die();
+                return new GameElementDeathEvent(mover);
+            } else {
+                this.die();
+                return new GameElementDeathEvent(this);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void die() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean isInvincible() {
+       return invincible;
+    }
+
+    public void addPoints(int points) {
+       player.addPoints(points);
     }
 
 }

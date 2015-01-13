@@ -39,7 +39,7 @@ public class PathGuide implements Guider {
     }
 
     private void moveToCell(MovingElement movingElement, TraversableCell traversableCell) {
-        pathPiece.removeMover(movingElement);
+        pathPiece.removeElement(movingElement);
         traversableCell.addMover(movingElement);
         if(traversableCell instanceof PathPiece){
             pathPiece = (PathPiece) traversableCell;

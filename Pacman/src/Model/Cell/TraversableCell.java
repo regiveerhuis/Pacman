@@ -6,7 +6,10 @@
 package Model.Cell;
 
 import Model.Direction;
+import Model.GameElement.GameElement;
+import Model.GameElement.GameElementDeathEvent;
 import Model.GameElement.MovingElement;
+import Model.GameElement.StaticElement;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import java.util.List;
  */
 public abstract class TraversableCell extends Cell {
 
-    private ArrayList<MovingElement> movers = new ArrayList();
+    private ArrayList<GameElement> elements = new ArrayList();
 
     public TraversableCell(int positionX, int positionY) {
         super(positionX, positionY);
@@ -26,25 +29,48 @@ public abstract class TraversableCell extends Cell {
 
     public abstract Direction[] getPossibleDirections();
 
+    @Override
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
         g.translate(positionX * CELL_SIZE, positionY * CELL_SIZE);
         g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
-        for (MovingElement mover : movers) {
-            mover.draw(g);
+        for (GameElement element : elements) {
+            element.draw(g);
         }
         g.translate(-positionX * CELL_SIZE, -positionY * CELL_SIZE);
     }
 
+    
+    
     public void addMover(MovingElement mover) {
-        movers.add(mover);
+        elements.add(mover);
+        for(GameElement element : elements){
+            GameElementDeathEvent e = element.moverEnteredCell(mover);
+            if(e != null){
+                if(e.GetElement() == mover){
+                    removeElement(mover);
+                    break;
+                }else{
+                    removeElement(e.GetElement());
+                }
+            }
+        }
     }
 
-    public void removeMover(MovingElement mover) {
-        movers.remove(mover);
+    public void removeElement(GameElement element) {
+        elements.remove(element);
     }
 
-    boolean isPossibleDirection(Direction direction) {
+    public void addStatic(StaticElement staticElement) {
+        elements.add(staticElement);
+    }
+
+
+    public boolean isPossibleDirection(Direction direction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean isEmpty() {
+        return elements.isEmpty();
     }
 }

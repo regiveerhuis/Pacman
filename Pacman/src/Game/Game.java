@@ -23,13 +23,14 @@ public class Game implements ActionListener {
     private PlayGround playGround;
     private GameFrame gameFrame;
     private Timer timer;
+    private Player player;
     private static final int MOVE_SPEED = 1000;
     
     public Game(GameFrame gameFrame) {
         this.gameFrame = gameFrame;
         timer = new Timer(MOVE_SPEED, this);
         playGround = new PlayGround(LevelData.getLevelData(Level.Level), this);
-        
+        this.player = new Player(3);
     }
     
     public void draw(Graphics g){
@@ -51,6 +52,10 @@ public class Game implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         gameFrame.repaint();
+    }
+    
+    public Player getPlayer(){
+        return player;
     }
 
 }

@@ -182,7 +182,7 @@ public class Node extends TraversableCell implements Guider {
                     movingElement.setGuider(new PathGuide(path, (PathPiece) cell));
                 }
             }
-            this.removeMover(movingElement);
+            this.removeElement(movingElement);
         }
     }
     

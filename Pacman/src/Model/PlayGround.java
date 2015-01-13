@@ -17,6 +17,7 @@ import Model.GameElement.Ghost;
 import Game.Game;
 import Game.KeyEventWrapper;
 import Game.LevelData;
+import Model.GameElement.PacDot;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.EnumMap;
@@ -28,29 +29,29 @@ import java.util.Set;
  * @author Regi
  */
 public class PlayGround {
-
+    
     private Cell[][] cells;
     private HashSet<Path> paths = new HashSet();
-
+    
     public Cell[][] getCells() {
         return cells;
     }
-
+    
     public PlayGround(LevelData levelData, Game game) {
         boolean[][] cellData = levelData.getCellData();
         cells = new Cell[cellData.length][cellData[0].length];
         createNodes(cellData);
         indexPaths();
-
+        
         TraversableCell pacmanStartCell = (TraversableCell) cells[levelData.getStartPositionPacmanX()][levelData.getStartPositionPacmanY()];
-        Pacman pacman = new Pacman(pacmanStartCell);
+        Pacman pacman = new Pacman(pacmanStartCell, game.getPlayer());
+        
         if (pacmanStartCell instanceof Node) {
             pacman.setGuider((Node) pacmanStartCell);
         } else {
-            System.out.println("pathamount: "  + paths.size());
+            System.out.println("pathamount: " + paths.size());
             for (Path path : paths) {
-                if (path.containsCell(pacmanStartCell))
-                {
+                if (path.containsCell(pacmanStartCell)) {
                     pacman.setGuider(new PathGuide(path, (PathPiece) pacmanStartCell));
                     System.out.println("found him");
                     break;
@@ -64,7 +65,7 @@ public class PlayGround {
         game.addTimerListener(pacman);
         TraversableCell[] ghostStartCell = new TraversableCell[levelData.getStartPositionGhostX().length];
         Color[] ghostColors = {Color.ORANGE, Color.RED, Color.CYAN, Color.PINK}; //oranje rood cyaan roze
-      
+        
         for (int i = 0; i < levelData.getStartPositionGhostX().length; i++) {
             ghostStartCell[i] = (TraversableCell) cells[levelData.getStartPositionGhostX()[i]][levelData.getStartPositionGhostY()[i]];
             Ghost ghost = new Ghost(ghostColors[i], ghostStartCell[i]);
@@ -80,16 +81,26 @@ public class PlayGround {
                     }
                 }
             }
+            
+            for (Cell[] c : cells) {
+                for (Cell cell : c) {
+                    if (cell instanceof TraversableCell) {
+                        if (((TraversableCell) cell).isEmpty()) {
+                            ((TraversableCell) cell).addStatic(new PacDot());
+                        }
+                    }
+                }
+            }
         }
-
+        
     }
-
+    
     public void draw(Graphics g) {
         for (Cell[] cellArr : cells) {
             for (Cell cell : cellArr) {
-
+                
                 cell.draw(g);
-
+                
             }
         }
     }
@@ -102,7 +113,7 @@ public class PlayGround {
                 if (!cellData[i][j]) {
                     cells[i][j] = new Wall(i, j);
                 } else {
-
+                    
                     EnumMap<Direction, Path> directions = new EnumMap<Direction, Path>(Direction.class);
                     //if you're not on the far left and the cell to the left of you is not a wall, add a neighbour
                     if (i > 0 && cellData[i - 1][j]) {
@@ -122,16 +133,16 @@ public class PlayGround {
                     //if you're not at the bottom and the cell under you is not a wall, add a neighbour
                     if (j + 1 < cellData[i].length && cellData[i][j + 1]) {
                         directions.put(Direction.SOUTH, null);
-
+                        
                     }
-
+                    
                     if (directions.size() != 2) {
                         cells[i][j] = new Node(i, j, directions);
                     }
                 }
             }
         }
-
+        
         for (Cell[] cellArr : cells) {
             for (Cell cell : cellArr) {
                 if (cell instanceof Node) {
@@ -139,9 +150,9 @@ public class PlayGround {
                 }
             }
         }
-
+        
     }
-
+    
     private void indexPaths() {
         for (Cell[] c : cells) {
             for (Cell cell : c) {

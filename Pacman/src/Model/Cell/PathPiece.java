@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Model.Cell;
 
 import Model.Direction;
@@ -14,6 +13,7 @@ import java.awt.Graphics;
  * @author Regi
  */
 public class PathPiece extends TraversableCell {
+
     private Direction forwardDirection;
     private Direction backwardDirection;
 
@@ -22,22 +22,22 @@ public class PathPiece extends TraversableCell {
         this.forwardDirection = forwardDirection;
         this.backwardDirection = backwardDirection;
     }
- 
+
     @Override
-    public Direction[] getPossibleDirections(){
+    public Direction[] getPossibleDirections() {
         return new Direction[]{forwardDirection, backwardDirection};
     }
-    
+
     @Override
-    public String toString(){
-        return "pathpiece to " + forwardDirection + " and "+ backwardDirection;
+    public String toString() {
+        return "pathpiece to " + forwardDirection + " and " + backwardDirection;
     }
 
-    boolean isPossibleDirection(Direction direction) {
-       return direction == forwardDirection || direction == backwardDirection;
+    public boolean isPossibleDirection(Direction direction) {
+        return direction == forwardDirection || direction == backwardDirection;
     }
-    
-    boolean isForwardDirection(Direction direction){
+
+    boolean isForwardDirection(Direction direction) {
         return direction == forwardDirection;
     }
 }
