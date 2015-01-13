@@ -121,7 +121,7 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="LabelLivesDisplay" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelLivesDisplay" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -139,7 +139,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabelLivesText" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="LabelLivesDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabelLivesDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="18" max="32767" attributes="0"/>
               </Group>
@@ -162,7 +162,7 @@
             <Property name="text" type="java.lang.String" value="9001"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="LabelLivesDisplay">
+        <Component class="javax.swing.JLabel" name="jLabelLivesDisplay">
           <Properties>
             <Property name="text" type="java.lang.String" value="3"/>
           </Properties>

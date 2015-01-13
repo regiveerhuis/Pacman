@@ -62,4 +62,9 @@ public class PathGuide implements Guider {
         return pathPiece.isPossibleDirection(direction);
     }
 
+    @Override
+    public Guider clone() {
+        return new PathGuide(path, pathPiece);
+    }
+
 }

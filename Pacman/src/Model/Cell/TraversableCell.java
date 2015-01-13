@@ -40,8 +40,6 @@ public abstract class TraversableCell extends Cell {
         g.translate(-positionX * CELL_SIZE, -positionY * CELL_SIZE);
     }
 
-    
-    
     public void addMover(MovingElement mover) {
         elements.add(mover);
         for(GameElement element : elements){
@@ -64,7 +62,6 @@ public abstract class TraversableCell extends Cell {
     public void addStatic(StaticElement staticElement) {
         elements.add(staticElement);
     }
-
 
     public boolean isPossibleDirection(Direction direction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

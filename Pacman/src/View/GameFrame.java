@@ -6,12 +6,15 @@ package View;
 import Game.Game;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyListener;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Matthias
  */
-public class GameFrame extends javax.swing.JFrame {
+public class GameFrame extends javax.swing.JFrame implements Observer {
 
     private Game game;
 
@@ -46,7 +49,7 @@ public class GameFrame extends javax.swing.JFrame {
         jLabelScoreText = new javax.swing.JLabel();
         jLabelLivesText = new javax.swing.JLabel();
         jLabelScoreDisplay = new javax.swing.JLabel();
-        LabelLivesDisplay = new javax.swing.JLabel();
+        jLabelLivesDisplay = new javax.swing.JLabel();
         gamePanel1 = new View.GamePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -92,7 +95,7 @@ public class GameFrame extends javax.swing.JFrame {
 
         jLabelScoreDisplay.setText("9001");
 
-        LabelLivesDisplay.setText("3");
+        jLabelLivesDisplay.setText("3");
 
         javax.swing.GroupLayout jPanelInfoLayout = new javax.swing.GroupLayout(jPanelInfo);
         jPanelInfo.setLayout(jPanelInfoLayout);
@@ -109,7 +112,7 @@ public class GameFrame extends javax.swing.JFrame {
                         .addComponent(jLabelScoreDisplay))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelInfoLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(LabelLivesDisplay)))
+                        .addComponent(jLabelLivesDisplay)))
                 .addContainerGap())
         );
         jPanelInfoLayout.setVerticalGroup(
@@ -122,7 +125,7 @@ public class GameFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelLivesText)
-                    .addComponent(LabelLivesDisplay))
+                    .addComponent(jLabelLivesDisplay))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -175,13 +178,12 @@ public class GameFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel LabelLivesDisplay;
     private View.GamePanel gamePanel1;
     private javax.swing.JButton jButtonPause;
     private javax.swing.JButton jButtonReset;
     private javax.swing.JButton jButtonStop;
+    private javax.swing.JLabel jLabelLivesDisplay;
     private javax.swing.JLabel jLabelLivesText;
     private javax.swing.JLabel jLabelScoreDisplay;
     private javax.swing.JLabel jLabelScoreText;
@@ -191,5 +193,17 @@ public class GameFrame extends javax.swing.JFrame {
 
     public void drawGame(Graphics g) {
         game.draw(g);
+    }
+
+    @Override
+    public void update(Observable o, Object o1) {
+        if (o1 instanceof KeyListener) {
+            this.addKeyListener((KeyListener) o1);
+        }
+        if (game != null) {
+            jLabelLivesDisplay.setText(String.valueOf(game.getLives()));
+            jLabelScoreDisplay.setText(String.valueOf(game.getPoints()));
+            repaint();
+        }
     }
 }

@@ -11,6 +11,8 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.Timer;
 
 
@@ -18,19 +20,19 @@ import javax.swing.Timer;
  *
  * @author Regi
  */
-public class Game implements ActionListener {
+public class Game extends Observable implements ActionListener, Observer {
 
     private PlayGround playGround;
-    private GameFrame gameFrame;
     private Timer timer;
     private Player player;
     private static final int MOVE_SPEED = 1000;
     
     public Game(GameFrame gameFrame) {
-        this.gameFrame = gameFrame;
-        timer = new Timer(MOVE_SPEED, this);
-        playGround = new PlayGround(LevelData.getLevelData(Level.Level), this);
+        addObserver(gameFrame);
         this.player = new Player(3);
+        player.addObserver(this);
+        timer = new Timer(MOVE_SPEED, this);
+        playGround = new PlayGround(LevelData.getLevelData(Level.Level), this); 
     }
     
     public void draw(Graphics g){
@@ -38,7 +40,8 @@ public class Game implements ActionListener {
     }
     
     public void addKeyListener(KeyListener keyListener){
-        gameFrame.addKeyListener(keyListener);
+        setChanged();
+        notifyObservers(keyListener);
     }
     
     public void addTimerListener(ActionListener actionListener){
@@ -51,11 +54,26 @@ public class Game implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        gameFrame.repaint();
+        setChanged();
+        notifyObservers();
     }
     
     public Player getPlayer(){
         return player;
+    }
+
+    public int getPoints(){
+        return player.getPoints();
+    }
+    
+    public int getLives(){
+        return player.getLives();
+    }
+    
+    @Override
+    public void update(Observable obs, Object obj) {
+        setChanged();
+        notifyObservers();
     }
 
 }

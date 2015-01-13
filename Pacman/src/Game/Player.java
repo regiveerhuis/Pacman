@@ -5,11 +5,13 @@
  */
 package Game;
 
+import java.util.Observable;
+
 /**
  *
  * @author Regi
  */
-public class Player {
+public class Player extends Observable{
 
     private int lives;
     private int points;
@@ -21,6 +23,8 @@ public class Player {
 
     public void pacmanDies() {
         lives--;
+        setChanged();
+        notifyObservers();
     }
 
     public int getLives() {
@@ -28,7 +32,11 @@ public class Player {
     }
 
     public void addPoints(int points) {
-        this.points += points;
+        if(points!=0){
+            this.points += points;
+            setChanged();
+            notifyObservers();
+        }
     }
 
     public int getPoints() {

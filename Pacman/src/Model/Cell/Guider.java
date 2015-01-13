@@ -23,4 +23,6 @@ public interface Guider {
     public List<Node> getClosestNodes();
     
     public boolean isPossibleDirection(Direction direction);
+
+    public Guider clone();
 }

@@ -18,13 +18,13 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     private Direction nextDirection;
     private Direction curDirection;
-    private TraversableCell startPosition;
+
     private boolean biteFrame = false;
     private boolean invincible;
     private Player player;
 
     public Pacman(TraversableCell startCell, Player player) {
-        startPosition = startCell;
+        super(startCell);
         this.player = player;
     }
 
@@ -109,7 +109,10 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     @Override
     public void die() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        player.pacmanDies();
+        this.curDirection = null;
+        this.nextDirection = null;
+        moveToStartPosition();
     }
 
     public boolean isInvincible() {

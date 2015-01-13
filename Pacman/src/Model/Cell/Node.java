@@ -208,4 +208,9 @@ public class Node extends TraversableCell implements Guider {
     public boolean isPossibleDirection(Direction direction) {
        return paths.containsKey(direction);
     }
+
+    @Override
+    public Guider clone(){
+        return new Node(getPositionX(), getPositionY(), paths);
+    }
 }

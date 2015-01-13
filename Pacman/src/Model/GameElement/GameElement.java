@@ -4,6 +4,7 @@
 
 package Model.GameElement;
 import java.awt.Graphics;
+import java.util.Observable;
 
 /**
  * @author Matthias

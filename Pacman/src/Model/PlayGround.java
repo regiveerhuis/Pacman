@@ -17,11 +17,14 @@ import Model.GameElement.Ghost;
 import Game.Game;
 import Game.KeyEventWrapper;
 import Game.LevelData;
+import Model.GameElement.MovingElement;
 import Model.GameElement.PacDot;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -49,11 +52,9 @@ public class PlayGround {
         if (pacmanStartCell instanceof Node) {
             pacman.setGuider((Node) pacmanStartCell);
         } else {
-            System.out.println("pathamount: " + paths.size());
             for (Path path : paths) {
                 if (path.containsCell(pacmanStartCell)) {
                     pacman.setGuider(new PathGuide(path, (PathPiece) pacmanStartCell));
-                    System.out.println("found him");
                     break;
                 }
             }
@@ -105,11 +106,24 @@ public class PlayGround {
         }
     }
 
+    //Finds the path containing the cell given. returns null if the cell belongs to no path (e.g. if it does not exist, or if it is a node)
+    public Path findPathByCell(TraversableCell cell){
+         if (cell instanceof Node) {
+            return null;
+        } else {
+            for (Path path : paths) {
+                if (path.containsCell(cell)) {
+                    return path;
+                }
+            }
+        }
+        return null;
+    }
+    
     //fills the Cell[][] array with walls and nodes
     private void createNodes(boolean[][] cellData) {
         for (int i = 0; i < cellData.length; i++) {
             for (int j = 0; j < cellData[i].length; j++) {
-                System.out.println("hallo: " + i + ", " + j);
                 if (!cellData[i][j]) {
                     cells[i][j] = new Wall(i, j);
                 } else {
@@ -162,4 +176,5 @@ public class PlayGround {
             }
         }
     }
+
 }

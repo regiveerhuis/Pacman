@@ -23,8 +23,8 @@ public class Ghost extends MovingElement {
     TraversableCell startCell;
 
     public Ghost(Color color, TraversableCell startCell) {
+        super(startCell);
         this.color = color;
-        this.startCell = startCell;
     }
 
     public void draw(Graphics g) {
