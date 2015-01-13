@@ -44,4 +44,8 @@ public class PathPiece extends TraversableCell {
     public String toString(){
         return "pathpiece to " + forwardDirection + " and "+ backwardDirection;
     }
+
+    boolean isPossibleDirection(Direction direction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

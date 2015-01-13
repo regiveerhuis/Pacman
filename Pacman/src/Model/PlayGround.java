@@ -6,6 +6,7 @@
 package Model;
 
 import Game.Game;
+import Game.KeyEventWrapper;
 import Game.LevelData;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -32,7 +33,9 @@ public class PlayGround {
 
         Pacman pacman = new Pacman(pacmanStartCell);
         pacmanStartCell.addMover(pacman);
-        game.addKeyListener(pacman);
+        KeyEventWrapper keyEventWrapper = new KeyEventWrapper();
+        keyEventWrapper.addListener(pacman);
+        game.addKeyListener(keyEventWrapper);
         game.addTimerListener(pacman);
         TraversableCell[] ghostStartCell = new TraversableCell[levelData.getStartPositionGhostX().length];
         Color[] ghostColors = {Color.ORANGE, Color.RED, Color.CYAN, Color.PINK}; //oranje rood cyaan roze

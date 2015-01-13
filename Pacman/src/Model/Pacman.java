@@ -13,62 +13,26 @@ import java.awt.event.KeyListener;
 /**
  * @author Matthias
  */
-public class Pacman extends MovingElement implements KeyListener {
+public class Pacman extends MovingElement implements DirectionEventListener, PathingTarget {
 
     private Direction nextDirection;
     private Direction curDirection;
-    private TraversableCell curCell;
+
     private TraversableCell startPosition;
     boolean biteFrame = false;
+    private boolean invincible;
 
     public Pacman(TraversableCell startCell) {
-        curCell = startCell;
         startPosition = startCell;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                nextDirection = Direction.NORTH;
-                break;
-            case KeyEvent.VK_RIGHT:
-                nextDirection = Direction.EAST;
-                break;
-            case KeyEvent.VK_DOWN:
-                nextDirection = Direction.SOUTH;
-                break;
-            case KeyEvent.VK_LEFT:
-                nextDirection = Direction.WEST;
-                break;
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-
     public void tryNextMove() {
-        for (Direction d : curCell.getPossibleDirections()) {
-            if (d == nextDirection) {
-                curDirection = nextDirection;
-                nextDirection = null;
-                move(curDirection);
-                return;
-            }
-        }
-
-        for (Direction d : curCell.getPossibleDirections()) {
-            if (d == curDirection) {
-                move(curDirection);
-                break;
-            }
+        if (getGuider().isPossibleDirection(nextDirection)) {
+            curDirection = nextDirection;
+            nextDirection = null;
+            move(curDirection);
+        } else if (getGuider().isPossibleDirection(curDirection)) {
+            move(curDirection);
         }
 
     }
@@ -97,23 +61,32 @@ public class Pacman extends MovingElement implements KeyListener {
         biteFrame = !biteFrame;
     }
 
-    @Override
-    public void move(Direction direction) {
-        TraversableCell newCell = curCell.tryMove(direction);
-        System.out.println("try move");
-        if (newCell != null) {
-            curCell.removeMover(this);
-            curCell = newCell;
-            newCell.addMover(this);
-            System.out.println("moved to :" + curCell.getPositionX() + ", " + curCell.getPositionY());
-        }
-    }
-
     /*
-    @Override
-    public void Redraw(RedrawEvent e) {
+     @Override
+     public void move(Direction direction) {
+     TraversableCell newCell = curCell.tryMove(direction);
+     if (newCell != null) {
+     curCell.removeMover(this);
+     curCell = newCell;
+     newCell.addMover(this);
+     }
+     }
+     */
+    /*
+     @Override
+     public void Redraw(RedrawEvent e) {
 
     
+     }
+     */
+    @Override
+    public void directionEvent(Direction direction) {
+        nextDirection = direction;
     }
-    */
+
+    @Override
+    public boolean moveTo() {
+        return !invincible;
+    }
+
 }

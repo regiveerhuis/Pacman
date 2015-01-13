@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Model;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -15,14 +15,15 @@ import java.util.Stack;
  *
  * @author Regi
  */
-public class Node extends TraversableCell{
+public class Node extends TraversableCell implements Guider {
+
     private Map<Direction, Path> paths;
-    
+
     public Node(int positionX, int positionY, Map<Direction, Path> paths) {
         super(positionX, positionY);
         this.paths = paths;
     }
-    
+
     /**
      * @return the paths
      */
@@ -32,35 +33,35 @@ public class Node extends TraversableCell{
     }
 
     @Override
-    public TraversableCell tryMove(Direction direction){
-        if(paths.containsKey(direction)){
-            if(paths.get(direction).isStartNode(this)){
+    public TraversableCell tryMove(Direction direction) {
+        if (paths.containsKey(direction)) {
+            if (paths.get(direction).isStartNode(this)) {
                 return paths.get(direction).getNextTraversableCell(this);
-            }else if(paths.get(direction).isEndNode(this)){
+            } else if (paths.get(direction).isEndNode(this)) {
                 return paths.get(direction).getPreviousTraversableCell(this);
             }
         }
         return null;
     }
-    
+
     public void setPath(Direction direction, Path path) {
         paths.put(direction, path);
     }
 
-    private boolean isPathValid(Direction direction){
+    private boolean isPathValid(Direction direction) {
         return paths.containsKey(direction) && paths.get(direction) != null;
     }
-    
+
     @Override
-    public String toString(){
-        String r = "node"; 
-        for(Direction d : paths.keySet()){
-           r+= ", " + d.toString().charAt(0);
+    public String toString() {
+        String r = "node";
+        for (Direction d : paths.keySet()) {
+            r += ", " + d.toString().charAt(0);
         }
         return r;
     }
-    
-     //makes, fills and returns a path.
+
+    //makes, fills and returns a path.
     public void initNode(Cell[][] cells, boolean[][] cellData) {
         for (Direction direction : getPossibleDirections()) {
 
@@ -69,7 +70,7 @@ public class Node extends TraversableCell{
             }
         }
     }
-    
+
     private void makeNodePath(Cell[][] cells, boolean[][] cellData, Direction direction) {
         Stack<int[]> pathPieceLocations = new Stack<>();
         Stack<Direction[]> pathPieceDirections = new Stack<>();
@@ -116,7 +117,7 @@ public class Node extends TraversableCell{
         Path path = new Path(endNode, this, pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
         setPath(direction, path);
-        
+
         while (pathPieceLocations.size() != 0) {
             int[] locations = pathPieceLocations.pop();
             Direction[] directions = pathPieceDirections.pop();
@@ -126,7 +127,7 @@ public class Node extends TraversableCell{
             cells[pathPiece.getPositionX()][pathPiece.getPositionY()] = pathPiece;
         }
     }
-    
+
     private ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
         ArrayList<Direction> directions = new ArrayList<Direction>();
         for (Direction direction : Direction.values()) {
@@ -163,5 +164,27 @@ public class Node extends TraversableCell{
             }
         }
         return directions;
+    }
+
+    @Override
+    public void tryMove(Direction direction, MovingElement movingElement) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public TraversableCell getCurrentCell() {
+        return this;
+    }
+
+    @Override
+    public List<Node> getClosestNodes() {
+        ArrayList<Node> n = new ArrayList();
+        n.add(this);
+        return n;
+    }
+
+    @Override
+    public boolean isPossibleDirection(Direction direction) {
+       return paths.containsKey(direction);
     }
 }
