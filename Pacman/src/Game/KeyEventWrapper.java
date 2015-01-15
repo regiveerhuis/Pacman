@@ -40,6 +40,7 @@ public class KeyEventWrapper implements KeyListener {
         if(direction != null){
             notify(direction);
         }
+        System.out.println("vla");
     }
 
     @Override

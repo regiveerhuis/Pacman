@@ -4,6 +4,7 @@
 package Model.GameElement;
 
 import Game.Player;
+import Game.TimerListenerHelper;
 import Model.Cell.Cell;
 import Model.Direction;
 import Model.Cell.TraversableCell;
@@ -18,14 +19,18 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     private Direction nextDirection;
     private Direction curDirection;
-
+    private final int invincibleTime = 30;
+    private int invincibleCounter = 0;
     private boolean biteFrame = false;
-    private boolean invincible;
+    private boolean invincible = false;
+    private int walkSpeed = 30;
+    private TimerListenerHelper listenHelper;
     private Player player;
 
     public Pacman(TraversableCell startCell, Player player) {
         super(startCell);
         this.player = player;
+        listenHelper = new TimerListenerHelper(walkSpeed, this);
     }
 
     public void tryNextMove() {
@@ -42,8 +47,11 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.YELLOW);
-
+        if (invincible) {
+            g.setColor(Color.RED);
+        } else {
+            g.setColor(Color.YELLOW);
+        }
         int arcCenter = 0;
         if (curDirection != null) {
             arcCenter = curDirection.toDegrees();
@@ -62,6 +70,12 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
     public void actionPerformed(ActionEvent e) {
         tryNextMove();
         biteFrame = !biteFrame;
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter >= invincibleTime) {
+                invincible = false;
+            }
+        }
     }
 
     /*
@@ -99,8 +113,9 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
                 mover.die();
                 return new GameElementDeathEvent(mover);
             } else {
+                System.out.println("be dyin");
                 this.die();
-                return new GameElementDeathEvent(this);
+                return null;
             }
         } else {
             return null;
@@ -109,18 +124,30 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     @Override
     public void die() {
+        System.out.println(getGuider().getCurrentCell().getPositionX() + ", " + getGuider().getCurrentCell().getPositionY());
         player.pacmanDies();
         this.curDirection = null;
         this.nextDirection = null;
+        GhostEventTracker.getGhostEventTracker().notifyGhosts();
         moveToStartPosition();
+        
     }
 
     public boolean isInvincible() {
-       return invincible;
+        return invincible;
+    }
+
+    public void becomeInvincible() {
+        invincible = true;
+        invincibleCounter = 0;
     }
 
     public void addPoints(int points) {
-       player.addPoints(points);
+        player.addPoints(points);
+    }
+
+    public TimerListenerHelper getTimerListenerHelper() {
+      return listenHelper;
     }
 
 }

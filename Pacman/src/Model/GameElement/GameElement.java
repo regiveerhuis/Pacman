@@ -9,7 +9,7 @@ import java.util.Observable;
 /**
  * @author Matthias
  */
-public abstract class GameElement {
+public abstract class GameElement extends Observable {
     
     public abstract void draw(Graphics g);
     

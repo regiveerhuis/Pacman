@@ -24,7 +24,7 @@ public class Player extends Observable{
     public void pacmanDies() {
         lives--;
         setChanged();
-        notifyObservers();
+        notifyObservers(lives);
     }
 
     public int getLives() {
@@ -35,7 +35,7 @@ public class Player extends Observable{
         if(points!=0){
             this.points += points;
             setChanged();
-            notifyObservers();
+            notifyObservers(lives);
         }
     }
 

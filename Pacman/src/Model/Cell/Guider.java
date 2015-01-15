@@ -8,6 +8,7 @@ package Model.Cell;
 
 import Model.Direction;
 import Model.GameElement.MovingElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,11 +19,21 @@ public interface Guider {
     
     public void tryMove(Direction direction, MovingElement movingElement);
     
+    public void removeMover(MovingElement movingElement);
+    
     public TraversableCell getCurrentCell();
     
-    public List<Node> getClosestNodes();
+    public ArrayList<Node> getClosestNodes();
+    
+    public int distanceToNode(Node node);
     
     public boolean isPossibleDirection(Direction direction);
 
-    public Guider clone();
+    public Guider guiderClone();
+
+    public Direction[] getPossibleDirections();
+
+    public Direction getDirectionOfNode(Node targetNode);
+
+    
 }

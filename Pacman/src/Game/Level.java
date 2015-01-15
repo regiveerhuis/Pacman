@@ -11,5 +11,7 @@ package Game;
  * @author Regi
  */
 public enum Level {
-    Level
+    Level1,
+    Level2,
+    Level3
 }

@@ -175,21 +175,22 @@ public class Node extends TraversableCell implements Guider {
             }else{
                 cell = path.getNextTraversableCell(this);
             }
-            
-            cell.addMover(movingElement);
             if(movingElement.getGuider() == this){
                 if(cell instanceof PathPiece){
                     movingElement.setGuider(new PathGuide(path, (PathPiece) cell));
                 }
             }
             this.removeElement(movingElement);
+            cell.addMover(movingElement);
+            
+            
         }
     }
     
     @Override
     public void addMover(MovingElement movingElement){
-        super.addMover(movingElement);
         movingElement.setGuider(this);
+        super.addMover(movingElement);
     }
         
     @Override
@@ -198,7 +199,7 @@ public class Node extends TraversableCell implements Guider {
     }
 
     @Override
-    public List<Node> getClosestNodes() {
+    public ArrayList<Node> getClosestNodes() {
         ArrayList<Node> n = new ArrayList();
         n.add(this);
         return n;
@@ -210,7 +211,38 @@ public class Node extends TraversableCell implements Guider {
     }
 
     @Override
-    public Guider clone(){
-        return new Node(getPositionX(), getPositionY(), paths);
+    public Guider guiderClone(){
+        return this;
+    }
+
+    @Override
+    public void removeMover(MovingElement movingElement) {
+        removeElement(movingElement);
+    }
+
+    @Override
+    public int distanceToNode(Node node) {
+       if(node == this){
+           return 0;
+       }else{
+           return -1;
+       }
+    }
+
+    @Override
+    public Direction getDirectionOfNode(Node targetNode) {
+        for(Direction dir : paths.keySet()){
+            Path path = paths.get(dir);
+            if(path.isStartNode(this)){
+                if(targetNode == path.getEndNode()){
+                    return dir;
+                }
+            }else{
+                if(targetNode == path.getStartNode()){
+                    return dir;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -25,14 +25,23 @@ public class Game extends Observable implements ActionListener, Observer {
     private PlayGround playGround;
     private Timer timer;
     private Player player;
-    private static final int MOVE_SPEED = 1000;
+    private Level level;
+    private static final int TIMER_RESOLUTION = 10;
     
     public Game(GameFrame gameFrame) {
         addObserver(gameFrame);
         this.player = new Player(3);
         player.addObserver(this);
-        timer = new Timer(MOVE_SPEED, this);
-        playGround = new PlayGround(LevelData.getLevelData(Level.Level), this); 
+        level = Level.Level1;
+        
+        loadLevel(level);
+    }
+    
+    private void loadLevel(Level level){
+        if(timer!=null){timer.stop();}
+        timer = new Timer(TIMER_RESOLUTION, this);
+        playGround = new PlayGround(LevelData.getLevelData(level), this);
+        playGround.addObserver(this);
     }
     
     public void draw(Graphics g){
@@ -44,12 +53,12 @@ public class Game extends Observable implements ActionListener, Observer {
         notifyObservers(keyListener);
     }
     
-    public void addTimerListener(ActionListener actionListener){
+    public void addTimerListener(TimerListenerHelper listener){
         if(!timer.isRunning()){
             timer.start();
             timer.setRepeats(true);
         }
-        timer.addActionListener(actionListener);
+        timer.addActionListener(listener);
     }
 
     @Override
@@ -70,10 +79,35 @@ public class Game extends Observable implements ActionListener, Observer {
         return player.getLives();
     }
     
+    public void pause(){
+        timer.stop();
+    }
+    
+    public void resume(){
+        timer.start();
+    }
+    
     @Override
     public void update(Observable obs, Object obj) {
-        setChanged();
-        notifyObservers();
+        obs.getClass().toString();
+        if(obs instanceof PlayGround){
+      
+            if(level.ordinal() >= Level.values().length-1){
+                notifyObservers(true);
+       
+            }else{
+                level = level.values()[level.ordinal()+1];
+                loadLevel(level);
+                
+            }
+        }else{
+            setChanged();
+            if((int)obj == 0){
+                notifyObservers(true);
+            }else{
+                notifyObservers(false);
+            }
+        }
     }
 
 }

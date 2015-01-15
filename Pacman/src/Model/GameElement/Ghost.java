@@ -5,6 +5,7 @@
  */
 package Model.GameElement;
 
+import Game.TimerListenerHelper;
 import Model.Cell.Cell;
 import Model.Direction;
 import Model.Cell.TraversableCell;
@@ -17,14 +18,19 @@ import java.awt.event.ActionEvent;
  *
  * @author Regi
  */
-public class Ghost extends MovingElement {
+public abstract class Ghost extends MovingElement {
 
-    Color color; //oranje rood cyaan roze
-    TraversableCell startCell;
+    private Color color; //oranje rood cyaan roze
+    private TraversableCell startCell;
+    private PathFinder pathFinder;
+    private int points = 200;
+    TimerListenerHelper listenHelper;
 
-    public Ghost(Color color, TraversableCell startCell) {
+    public Ghost(Color color, TraversableCell startCell, int walkSpeed) {
         super(startCell);
         this.color = color;
+        GhostEventTracker.getGhostEventTracker().addGhost(this);
+        listenHelper = new TimerListenerHelper(walkSpeed, this);
     }
 
     public void draw(Graphics g) {
@@ -35,12 +41,12 @@ public class Ghost extends MovingElement {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.move(pathFinder.getNextMove(getGuider()));
     }
 
     @Override
     public void move(Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.move(direction);
     }
 
     /*
@@ -51,22 +57,33 @@ public class Ghost extends MovingElement {
      */
     @Override
     public GameElementDeathEvent moverEnteredCell(MovingElement mover) {
+        if (mover == this) {
+            return null;
+        }
         if (mover instanceof Pacman) {
-            Pacman pacman = (Pacman) mover;
-            if(pacman.isInvincible()){
+            if (((Pacman) mover).isInvincible()) {
                 this.die();
+                ((Pacman) mover).addPoints(points);
                 return new GameElementDeathEvent(this);
-            }else{
-                pacman.die();
-                return new GameElementDeathEvent(pacman);
+            } else {
+                ((Pacman) mover).die();
+                return new GameElementDeathEvent(null);
             }
-        }else{
+        } else {
             return null;
         }
     }
 
     @Override
     public void die() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        moveToStartPosition();
+    }
+
+    protected void setPathFinder(PathFinder pathFinder) {
+        this.pathFinder = pathFinder;
+    }
+
+    public TimerListenerHelper getTimerListenerHelper() {
+        return listenHelper;
     }
 }

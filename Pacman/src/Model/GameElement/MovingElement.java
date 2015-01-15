@@ -38,12 +38,13 @@ public abstract class MovingElement extends GameElement implements ActionListene
     public void setGuider(Guider guider) {
         this.guider = guider;
         if (startGuider == null) {
-            startGuider = guider.clone();
+            startGuider = guider.guiderClone();
         }
     }
 
     protected void moveToStartPosition() {
+         getGuider().removeMover(this);
         startPosition.addMover(this);
-        setGuider(startGuider.clone());
+        setGuider(startGuider.guiderClone());
     }
 }

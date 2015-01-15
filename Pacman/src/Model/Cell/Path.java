@@ -41,4 +41,20 @@ public class Path {
     public boolean containsCell(TraversableCell traversableCell){
         return cells.contains(traversableCell);
     }
+
+    public Node getStartNode() {
+        return (Node) cells.get(0);
+    }
+
+    public Node getEndNode() {
+        return (Node) cells.get(cells.size()-1);
+    }
+
+    public int getLength() {
+        return cells.size();
+    }
+
+    public int distanceToStart(TraversableCell startCell) {
+        return cells.indexOf(startCell)+1;
+    }
 }

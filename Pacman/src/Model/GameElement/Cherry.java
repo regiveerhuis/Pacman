@@ -14,18 +14,23 @@ import java.awt.Graphics;
  *
  * @author Regi
  */
-public class PacDot extends StaticElement{
+public class Cherry extends StaticElement{
 
-    public PacDot() {
-        super(10);
+    public Cherry(){
+        super(100);
     }
-
+    
     @Override
-    public void draw(Graphics g) {
-        g.setColor(Color.white);
-        g.fillOval(Cell.CELL_SIZE*3/8, Cell.CELL_SIZE*3/8, Cell.CELL_SIZE/4, Cell.CELL_SIZE/4);
+    public void draw(Graphics g){
+        g.setColor(Color.RED);
+        g.fillOval(Cell.CELL_SIZE*3/4, Cell.CELL_SIZE/2, Cell.CELL_SIZE/4, Cell.CELL_SIZE/4);
+        g.fillOval(Cell.CELL_SIZE/2, Cell.CELL_SIZE*3/4, Cell.CELL_SIZE/4, Cell.CELL_SIZE/4);
+        g.setColor(Color.GREEN);
+        g.drawLine(Cell.CELL_SIZE/2, Cell.CELL_SIZE*3/4, Cell.CELL_SIZE/4, Cell.CELL_SIZE/4);
+        g.drawLine(Cell.CELL_SIZE*3/4, Cell.CELL_SIZE/2, Cell.CELL_SIZE/4, Cell.CELL_SIZE/4);
     }
-
+    
+    
     @Override
     public GameElementDeathEvent moverEnteredCell(MovingElement mover) {
        if(mover instanceof Pacman){
@@ -38,6 +43,7 @@ public class PacDot extends StaticElement{
     }
 
     @Override
-    public void die() {setChanged(); notifyObservers();System.out.println("hello");}
-    
+    public void die() {
+       
+    }
 }

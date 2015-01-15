@@ -17,6 +17,7 @@ import java.util.Observer;
 public class GameFrame extends javax.swing.JFrame implements Observer {
 
     private Game game;
+    private boolean paused = false;
 
     /**
      * Creates new form GameFrame
@@ -55,8 +56,18 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButtonPause.setText("Pause");
+        jButtonPause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPauseActionPerformed(evt);
+            }
+        });
 
         jButtonReset.setText("Reset");
+        jButtonReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonResetActionPerformed(evt);
+            }
+        });
 
         jButtonStop.setText("Stop");
         jButtonStop.addActionListener(new java.awt.event.ActionListener() {
@@ -169,11 +180,33 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStopActionPerformed
+        stop();
+    }//GEN-LAST:event_jButtonStopActionPerformed
+
+    private void jButtonPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPauseActionPerformed
+        if(!paused){
+            pause();
+            paused = true;
+            jButtonPause.setText("Resume");
+        }else{
+            resume();
+            paused = false;
+            jButtonPause.setText("Pause");
+        }
+    }//GEN-LAST:event_jButtonPauseActionPerformed
+
+    private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResetActionPerformed
+        GameFrame frame = new GameFrame();
+        frame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonResetActionPerformed
+
+    private void stop(){
         MenuFrame menu = new MenuFrame();
         menu.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jButtonStopActionPerformed
-
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -203,7 +236,22 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         if (game != null) {
             jLabelLivesDisplay.setText(String.valueOf(game.getLives()));
             jLabelScoreDisplay.setText(String.valueOf(game.getPoints()));
+            if(o1 instanceof Boolean){
+                if((Boolean)o1){
+                    stop();
+                }
+            }
             repaint();
         }
+    }
+
+    private void pause() {
+        game.pause();
+        requestFocus();
+    }
+
+    private void resume() {
+        game.resume();
+        requestFocus();
     }
 }

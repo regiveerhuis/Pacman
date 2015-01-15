@@ -8,7 +8,9 @@ package Model.Cell;
 import Model.Direction;
 import Model.GameElement.GameElement;
 import Model.GameElement.GameElementDeathEvent;
+import Model.GameElement.Ghost;
 import Model.GameElement.MovingElement;
+import Model.GameElement.Pacman;
 import Model.GameElement.StaticElement;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -33,24 +35,33 @@ public abstract class TraversableCell extends Cell {
     public void draw(Graphics g) {
         g.setColor(Color.BLACK);
         g.translate(positionX * CELL_SIZE, positionY * CELL_SIZE);
-        g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+        drawCell(g);
         for (GameElement element : elements) {
             element.draw(g);
         }
         g.translate(-positionX * CELL_SIZE, -positionY * CELL_SIZE);
     }
+    
+    protected void drawCell(Graphics g){
+        g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+    }
 
     public void addMover(MovingElement mover) {
         elements.add(mover);
-        for(GameElement element : elements){
-            GameElementDeathEvent e = element.moverEnteredCell(mover);
-            if(e != null){
-                if(e.GetElement() == mover){
-                    removeElement(mover);
+
+        for (int i = 0; i < elements.size(); i++) {
+            int integrity = elements.size();
+
+            GameElementDeathEvent e = elements.get(i).moverEnteredCell(mover);
+
+            if (e != null) {
+                removeElement(e.GetElement());
+                if (e.GetElement() == mover) {
                     break;
-                }else{
-                    removeElement(e.GetElement());
                 }
+            }
+            if (integrity != elements.size()) {
+                i = -1;
             }
         }
     }
