@@ -124,7 +124,7 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
 
     @Override
     public void die() {
-        System.out.println(getGuider().getCurrentCell().getPositionX() + ", " + getGuider().getCurrentCell().getPositionY());
+        
         player.pacmanDies();
         this.curDirection = null;
         this.nextDirection = null;

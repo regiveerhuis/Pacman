@@ -34,13 +34,14 @@ public class Game extends Observable implements ActionListener, Observer {
         player.addObserver(this);
         level = Level.Level1;
         
-        loadLevel(level);
+        loadNormalLevel(level);
     }
     
-    private void loadLevel(Level level){
+    private void loadNormalLevel(Level level){
         if(timer!=null){timer.stop();}
         timer = new Timer(TIMER_RESOLUTION, this);
-        playGround = new PlayGround(LevelData.getLevelData(level), this);
+        
+        playGround = new PlayGround(new XMLLevelReader().loadNormalLevel(level), this);
         playGround.addObserver(this);
     }
     
@@ -97,7 +98,7 @@ public class Game extends Observable implements ActionListener, Observer {
        
             }else{
                 level = level.values()[level.ordinal()+1];
-                loadLevel(level);
+                loadNormalLevel(level);
                 
             }
         }else{

@@ -7,6 +7,7 @@ package Model.Cell;
 
 import Model.Direction;
 import Model.GameElement.MovingElement;
+import Model.Tile;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,8 +39,8 @@ public class Node extends TraversableCell implements Guider {
     public void setPath(Direction direction, Path path) {
         paths.put(direction, path);
     }
-    
-    public Collection<Path> getPaths(){
+
+    public Collection<Path> getPaths() {
         return paths.values();
     }
 
@@ -57,7 +58,7 @@ public class Node extends TraversableCell implements Guider {
     }
 
     //makes, fills and returns a path.
-    public void initNode(Cell[][] cells, boolean[][] cellData) {
+    public void initNode(Cell[][] cells, Tile[][] cellData) {
         for (Direction direction : getPossibleDirections()) {
 
             if (!isPathValid(direction)) {
@@ -66,7 +67,7 @@ public class Node extends TraversableCell implements Guider {
         }
     }
 
-    private void makeNodePath(Cell[][] cells, boolean[][] cellData, Direction direction) {
+    private void makeNodePath(Cell[][] cells, Tile[][] cellData, Direction direction) {
         Stack<int[]> pathPieceLocations = new Stack<>();
         Stack<Direction[]> pathPieceDirections = new Stack<>();
 
@@ -109,7 +110,7 @@ public class Node extends TraversableCell implements Guider {
         }
 
         ArrayList<TraversableCell> pathPieces = new ArrayList();
-        
+
         Path path = new Path(pathPieces);
         endNode.setPath(prevDirection.inverse(), path);
         setPath(direction, path);
@@ -126,73 +127,62 @@ public class Node extends TraversableCell implements Guider {
         pathPieces.add(0, endNode);
     }
 
-    private ArrayList<Direction> getNextDirections(int x, int y, boolean[][] cellData, Direction prevDirection) {
+    private ArrayList<Direction> getNextDirections(int x, int y, Tile[][] cellData, Direction prevDirection) {
         ArrayList<Direction> directions = new ArrayList<Direction>();
-        for (Direction direction : Direction.values()) {
-            if (direction.inverse() != prevDirection) {
-                try {
-                    switch (direction) {
-                        case NORTH:
-                            if (cellData[x][y - 1]) {
-                                directions.add(direction);
-                            }
-                            break;
+        try {
 
-                        case SOUTH:
-                            if (cellData[x][y + 1]) {
-                                directions.add(direction);
-                            }
-                            break;
-
-                        case EAST:
-                            if (cellData[x + 1][y]) {
-                                directions.add(direction);
-                            }
-                            break;
-                        case WEST:
-                            if (cellData[x - 1][y]) {
-                                directions.add(direction);
-                            }
-                            break;
-
-                    }
-                } catch (IndexOutOfBoundsException e) {
-
-                }
+            if (cellData[x][y - 1] != Tile.WALL) {
+                directions.add(Direction.NORTH);
             }
+
+            if (cellData[x][y + 1] != Tile.WALL) {
+                directions.add(Direction.SOUTH);
+            }
+
+            if (cellData[x + 1][y] != Tile.WALL) {
+                directions.add(Direction.EAST);
+            }
+
+            if (cellData[x - 1][y] != Tile.WALL) {
+                directions.add(Direction.WEST);
+            }
+
+        } catch (IndexOutOfBoundsException e) {
+
         }
+
+        directions.remove(prevDirection.inverse());
         return directions;
     }
 
     @Override
     public void tryMove(Direction direction, MovingElement movingElement) {
-        if(isPossibleDirection(direction)){
+        if (isPossibleDirection(direction)) {
             TraversableCell cell;
             Path path = paths.get(direction);
-            
-            if(path.isEndNode(this)){
+
+            if (path.isEndNode(this)) {
                 cell = path.getPreviousTraversableCell(this);
-            }else{
+            } else {
                 cell = path.getNextTraversableCell(this);
             }
-            if(movingElement.getGuider() == this){
-                if(cell instanceof PathPiece){
+            if (movingElement.getGuider() == this) {
+                if (cell instanceof PathPiece) {
                     movingElement.setGuider(new PathGuide(path, (PathPiece) cell));
                 }
             }
             this.removeElement(movingElement);
             cell.addMover(movingElement);
-            
-            
+
         }
     }
-    
+
     @Override
-    public void addMover(MovingElement movingElement){
+    public void addMover(MovingElement movingElement) {
         movingElement.setGuider(this);
         super.addMover(movingElement);
     }
-        
+
     @Override
     public TraversableCell getCurrentCell() {
         return this;
@@ -207,11 +197,11 @@ public class Node extends TraversableCell implements Guider {
 
     @Override
     public boolean isPossibleDirection(Direction direction) {
-       return paths.containsKey(direction);
+        return paths.containsKey(direction);
     }
 
     @Override
-    public Guider guiderClone(){
+    public Guider guiderClone() {
         return this;
     }
 
@@ -222,23 +212,23 @@ public class Node extends TraversableCell implements Guider {
 
     @Override
     public int distanceToNode(Node node) {
-       if(node == this){
-           return 0;
-       }else{
-           return -1;
-       }
+        if (node == this) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public Direction getDirectionOfNode(Node targetNode) {
-        for(Direction dir : paths.keySet()){
+        for (Direction dir : paths.keySet()) {
             Path path = paths.get(dir);
-            if(path.isStartNode(this)){
-                if(targetNode == path.getEndNode()){
+            if (path.isStartNode(this)) {
+                if (targetNode == path.getEndNode()) {
                     return dir;
                 }
-            }else{
-                if(targetNode == path.getStartNode()){
+            } else {
+                if (targetNode == path.getStartNode()) {
                     return dir;
                 }
             }

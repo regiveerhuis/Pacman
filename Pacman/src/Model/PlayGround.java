@@ -51,12 +51,12 @@ public class PlayGround extends Observable implements Observer {
     }
 
     public PlayGround(LevelData levelData, Game game) {
-        boolean[][] cellData = levelData.getCellData();
+        Tile[][] cellData = levelData.getCellData();
         cells = new Cell[cellData.length][cellData[0].length];
         createNodes(levelData);
         indexPaths();
-
-        TraversableCell pacmanStartCell = (TraversableCell) cells[levelData.getStartPositionPacmanX()][levelData.getStartPositionPacmanY()];
+        int[] pacmanPosition = levelData.getIndexesOfType(Tile.PACMAN).get(0);
+        TraversableCell pacmanStartCell = (TraversableCell) cells[pacmanPosition[0]][pacmanPosition[1]];
         Pacman pacman = new Pacman(pacmanStartCell, game.getPlayer());
 
         if (pacmanStartCell instanceof Node) {
@@ -69,16 +69,23 @@ public class PlayGround extends Observable implements Observer {
                 }
             }
         }
+        
         pacmanStartCell.addMover(pacman);
+       
         KeyEventWrapper keyEventWrapper = new KeyEventWrapper();
         keyEventWrapper.addListener(pacman);
         game.addKeyListener(keyEventWrapper);
         game.addTimerListener(pacman.getTimerListenerHelper());
-        TraversableCell[] ghostStartCell = new TraversableCell[levelData.getStartPositionGhostX().length];
+        
+        ArrayList<int[]> ghostStartPositions = levelData.getIndexesOfType(Tile.GHOST);
+        while(ghostStartPositions.size()<4){
+            ghostStartPositions.add(ghostStartPositions.get(0));
+        }
+        TraversableCell[] ghostStartCell = new TraversableCell[ghostStartPositions.size()];
         Color[] ghostColors = {Color.ORANGE, Color.RED, Color.CYAN, Color.PINK}; //oranje rood cyaan roze
         int randomGhostCounter = 0;
-        for (int i = 0; i < levelData.getStartPositionGhostX().length; i++) {
-            ghostStartCell[i] = (TraversableCell) cells[levelData.getStartPositionGhostX()[i]][levelData.getStartPositionGhostY()[i]];
+        for (int i = 0; i < ghostStartPositions.size(); i++) {
+            ghostStartCell[i] = (TraversableCell) cells[ghostStartPositions.get(i)[0]][ghostStartPositions.get(i)[1]];
             Ghost ghost = null;
             if (randomGhostCounter < 2) {
                 ghost = new RandomGhost(ghostColors[i], ghostStartCell[i], pacman, 40);
@@ -100,7 +107,7 @@ public class PlayGround extends Observable implements Observer {
             }
         }
 
-        for (int[] superDotLocation : levelData.getSuperDotLocations()) {
+        for (int[] superDotLocation : levelData.getIndexesOfType(Tile.SUPER_DOT)) {
             if (cells[superDotLocation[0]][superDotLocation[1]] instanceof TraversableCell) {
                 ((TraversableCell) cells[superDotLocation[0]][superDotLocation[1]]).addStatic(new SuperDot());
             }
@@ -149,17 +156,17 @@ public class PlayGround extends Observable implements Observer {
 
     //fills the Cell[][] array with walls and nodes
     private void createNodes(LevelData levelData) {
-        boolean[][] cellData = levelData.getCellData();
+        Tile[][] cellData = levelData.getCellData();
         for (int i = 0; i < cellData.length; i++) {
             for (int j = 0; j < cellData[i].length; j++) {
-                if (!cellData[i][j]) {
+                if (cellData[i][j] == Tile.WALL) {
                     cells[i][j] = new Wall(i, j);
                 } else {
                     boolean isGhostNode = false;
                     ArrayList<Direction> ghostDirs = new ArrayList();
                     EnumMap<Direction, Path> directions = new EnumMap<Direction, Path>(Direction.class);
                     //if you're not on the far left and the cell to the left of you is not a wall, add a neighbour
-                    if (i > 0 && cellData[i - 1][j]) {
+                    if (i > 0 && cellData[i - 1][j] != Tile.WALL) {
                         directions.put(Direction.WEST, null);
                         if (levelData.isGhostPiece(i - 1, j)) {
                             isGhostNode = true;
@@ -168,7 +175,7 @@ public class PlayGround extends Observable implements Observer {
                     }
 
                     //if you're not on the far right and the cell to the right of you is not a wall, add a neighbour
-                    if (i + 1 < cellData.length && cellData[i + 1][j]) {
+                    if (i + 1 < cellData.length && cellData[i + 1][j] != Tile.WALL) {
                         directions.put(Direction.EAST, null);
                         if (levelData.isGhostPiece(i + 1, j)) {
                             isGhostNode = true;
@@ -177,7 +184,7 @@ public class PlayGround extends Observable implements Observer {
                     }
 
                     //if you're not at the top and the cell above you is not a wall, add a neighbour
-                    if (j > 0 && cellData[i][j - 1]) {
+                    if (j > 0 && cellData[i][j - 1] != Tile.WALL) {
                         directions.put(Direction.NORTH, null);
                         if (levelData.isGhostPiece(i, j - 1)) {
                             isGhostNode = true;
@@ -186,7 +193,7 @@ public class PlayGround extends Observable implements Observer {
                     }
 
                     //if you're not at the bottom and the cell under you is not a wall, add a neighbour
-                    if (j + 1 < cellData[i].length && cellData[i][j + 1]) {
+                    if (j + 1 < cellData[i].length && cellData[i][j + 1] != Tile.WALL) {
                         directions.put(Direction.SOUTH, null);
                         if (levelData.isGhostPiece(i, j + 1)) {
                             isGhostNode = true;
