@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Game;
+package MapData;
 
+import Game.Level;
 import Model.Tile;
 import java.io.File;
 import java.io.IOException;

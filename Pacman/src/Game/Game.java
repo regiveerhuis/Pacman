@@ -5,6 +5,7 @@
  */
 package Game;
 
+import MapData.XMLLevelReader;
 import Model.PlayGround;
 import View.GameFrame;
 import java.awt.Graphics;

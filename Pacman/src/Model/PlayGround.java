@@ -16,7 +16,7 @@ import Model.GameElement.Pacman;
 import Model.GameElement.Ghost;
 import Game.Game;
 import Game.KeyEventWrapper;
-import Game.LevelData;
+import MapData.LevelData;
 import Model.Cell.GhostNode;
 import Model.GameElement.Cherry;
 import Model.GameElement.MovingElement;
