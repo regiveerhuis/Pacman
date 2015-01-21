@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Model.GameElement;
 
 import Model.Cell.Guider;
@@ -16,6 +15,8 @@ import java.util.Random;
  */
 public class RandomPathFinder extends PathFinder {
 
+    private Direction prevDir;
+
     public RandomPathFinder(PathingTarget target) {
         super(target);
     }
@@ -24,6 +25,16 @@ public class RandomPathFinder extends PathFinder {
     protected Direction getMove(Guider guider) {
         Random rand = new Random();
         Direction[] dirs = guider.getPossibleDirections();
-        return dirs[rand.nextInt(dirs.length)];
+
+        Direction newDir = dirs[rand.nextInt(dirs.length)];
+        
+        if (prevDir != null && dirs.length > 1) {
+            while (newDir == this.prevDir.inverse()) {
+                newDir = dirs[rand.nextInt(dirs.length)];
+            }
+        }
+
+        this.prevDir = newDir;
+        return newDir;
     }
 }

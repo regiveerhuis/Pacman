@@ -35,6 +35,17 @@ public class Node extends TraversableCell implements Guider {
     public Direction[] getPossibleDirections() {
         return paths.keySet().toArray(new Direction[paths.keySet().size()]);
     }
+    
+    public Direction getPathDirection(Path path) {
+        Direction pathDirection = null;
+        for(Direction direction : paths.keySet()) {
+            if(paths.get(direction) == path) {
+                pathDirection = direction;
+            }
+        }
+        
+        return pathDirection;
+    }
 
     public void setPath(Direction direction, Path path) {
         paths.put(direction, path);
