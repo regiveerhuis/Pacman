@@ -16,7 +16,6 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.Timer;
 
-
 /**
  *
  * @author Regi
@@ -28,35 +27,37 @@ public class Game extends Observable implements ActionListener, Observer {
     private Player player;
     private Level level;
     private static final int TIMER_RESOLUTION = 10;
-    
+
     public Game(GameFrame gameFrame) {
         addObserver(gameFrame);
         this.player = new Player(3);
         player.addObserver(this);
         level = Level.Level1;
-        
-        loadNormalLevel(level);
-    }
-    
-    private void loadNormalLevel(Level level){
-        if(timer!=null){timer.stop();}
+        if (timer != null) {
+            timer.stop();
+        }
         timer = new Timer(TIMER_RESOLUTION, this);
-        
+
+        loadLevel(level);
+    }
+
+    protected void loadLevel(Level level) {
+
         playGround = new PlayGround(new XMLLevelReader().loadNormalLevel(level), this);
         playGround.addObserver(this);
     }
-    
-    public void draw(Graphics g){
+
+    public void draw(Graphics g) {
         playGround.draw(g);
     }
-    
-    public void addKeyListener(KeyListener keyListener){
+
+    public void addKeyListener(KeyListener keyListener) {
         setChanged();
         notifyObservers(keyListener);
     }
-    
-    public void addTimerListener(TimerListenerHelper listener){
-        if(!timer.isRunning()){
+
+    public void addTimerListener(TimerListenerHelper listener) {
+        if (!timer.isRunning()) {
             timer.start();
             timer.setRepeats(true);
         }
@@ -68,48 +69,54 @@ public class Game extends Observable implements ActionListener, Observer {
         setChanged();
         notifyObservers();
     }
-    
-    public Player getPlayer(){
+
+    public Player getPlayer() {
         return player;
     }
 
-    public int getPoints(){
+    public int getPoints() {
         return player.getPoints();
     }
-    
-    public int getLives(){
+
+    public int getLives() {
         return player.getLives();
     }
-    
-    public void pause(){
+
+    public void pause() {
         timer.stop();
     }
-    
-    public void resume(){
+
+    public void resume() {
         timer.start();
     }
-    
+
     @Override
     public void update(Observable obs, Object obj) {
         obs.getClass().toString();
-        if(obs instanceof PlayGround){
-      
-            if(level.ordinal() >= Level.values().length-1){
+        if (obs instanceof PlayGround) {
+
+            if (level.ordinal() >= Level.values().length - 1) {
                 notifyObservers(true);
-       
-            }else{
-                level = level.values()[level.ordinal()+1];
-                loadNormalLevel(level);
-                
+
+            } else {
+                level = level.values()[level.ordinal() + 1];
+                loadLevel(level);
+
             }
-        }else{
+        } else {
             setChanged();
-            if((int)obj == 0){
+            if ((int) obj == 0) {
                 notifyObservers(true);
-            }else{
+            } else {
                 notifyObservers(false);
             }
         }
     }
+    
+    
+    protected void setPlayGround(PlayGround playGround) {
+        this.playGround = playGround;
+    }
+    
 
 }

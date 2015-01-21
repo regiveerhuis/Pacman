@@ -7,7 +7,7 @@ package Model.Cell;
 
 import Model.Direction;
 import Model.GameElement.MovingElement;
-import Model.Tile;
+import MapData.Tile;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;

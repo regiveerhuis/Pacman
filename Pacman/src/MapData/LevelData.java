@@ -5,7 +5,6 @@
  */
 package MapData;
 
-import Model.Tile;
 import java.util.ArrayList;
 
 /**

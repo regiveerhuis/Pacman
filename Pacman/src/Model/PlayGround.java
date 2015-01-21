@@ -5,6 +5,7 @@
  */
 package Model;
 
+import MapData.Tile;
 import Model.Cell.Cell;
 import Model.Cell.TraversableCell;
 import Model.Cell.PathPiece;

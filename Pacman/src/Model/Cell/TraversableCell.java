@@ -50,8 +50,7 @@ public abstract class TraversableCell extends Cell {
         elements.add(mover);
 
         for (int i = 0; i < elements.size(); i++) {
-            int integrity = elements.size();
-
+            
             GameElementDeathEvent e = elements.get(i).moverEnteredCell(mover);
 
             if (e != null) {
@@ -59,9 +58,6 @@ public abstract class TraversableCell extends Cell {
                 if (e.GetElement() == mover) {
                     break;
                 }
-            }
-            if (integrity != elements.size()) {
-                i = -1;
             }
         }
     }

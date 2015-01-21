@@ -5,7 +5,6 @@
  */
 package MapData;
 
-import Model.Tile;
 import java.io.File;
 import java.util.Random;
 import java.util.logging.Level;

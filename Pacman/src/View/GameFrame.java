@@ -4,6 +4,7 @@
 package View;
 
 import Game.Game;
+import Game.RandomGame;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
