@@ -110,6 +110,7 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
     public GameElementDeathEvent moverEnteredCell(MovingElement mover) {
         if (mover instanceof Ghost) {
             if (invincible) {
+                System.out.println("be eaten");
                 mover.die();
                 return new GameElementDeathEvent(mover);
             } else {

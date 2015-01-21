@@ -32,7 +32,7 @@ public class RandomGame extends Game{
         Random rand = new Random();
         mapGen = new RandomMapGenerator();
         
-        PlayGround playGround = new PlayGround(mapGen.getMap(16, 16, rand.nextInt()), this);
+        PlayGround playGround = new PlayGround(mapGen.getMap(20, 10, rand.nextInt()), this);
         setPlayGround(playGround);
         playGround.addObserver(this);
     }

@@ -30,7 +30,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
 
     public void init() {
         initComponents();
-        game = new Game(this);
+        game = new RandomGame(this);
         setFocusable(true);
     }
 

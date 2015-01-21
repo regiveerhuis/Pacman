@@ -19,11 +19,12 @@ import java.util.Set;
 public class RandomMapGenerator {
 
     private int wallBlockSize = 4;
-    private int minimumGhostDistance = 1;
+    private int minimumGhostDistance = 0;
     private boolean ghostsTogether = true;
     private double correctChance = 0.6;
     private int superDotAmount = 4;
-    private float connectivity;
+    private double connectivity = 0.3;
+    private int nodeAmount = 8;
 
     public LevelData getMap(int xSize, int ySize, int seed) {
         ArrayList<Vector> nodes = new ArrayList();
@@ -112,21 +113,33 @@ public class RandomMapGenerator {
                 tiles[ghostPos.x][ghostPos.y] = Tile.GHOST;
             }
         }
+        Vector[] loc = new Vector[4];
 
-        for (int i = 0; i < 0; i++) {
+        loc[0] = new Vector(rand.nextInt(tiles.length), tiles[0].length - 1);
+        loc[1] = new Vector(rand.nextInt(tiles.length), 0);
+        loc[2] = new Vector(tiles.length - 1, rand.nextInt(tiles[0].length));
+        loc[3] = new Vector(0, rand.nextInt(tiles[0].length));
+        for (Vector location : loc) {
+            if (!nodes.contains(location)) {
+                nodes.add(location);
+                tiles[location.x][location.y] = Tile.EMPTY;
+            }
+        }
+
+        for (int i = 0; i < nodeAmount - 4; i++) {
             boolean notMadeNode = true;
             while (notMadeNode) {
-                Vector loc = new Vector(rand.nextInt(tiles.length), rand.nextInt(tiles[0].length));
-                if (!nodes.contains(loc)) {
-                    nodes.add(loc);
-                    tiles[loc.x][loc.y] = Tile.EMPTY;
+                System.out.println("notMadeNode");
+                Vector location = new Vector(rand.nextInt(tiles.length), rand.nextInt(tiles[0].length));
+                if (!nodes.contains(location)) {
+                    nodes.add(location);
+                    tiles[location.x][location.y] = Tile.EMPTY;
                     notMadeNode = false;
                 }
             }
         }
 
-//        createPath(tiles, nodes, rand);
-
+        createPaths(tiles, nodes, rand);
         tiles = fillWalls(tiles);
 
         putSuperDots(tiles, superDotAmount, rand);
@@ -167,24 +180,73 @@ public class RandomMapGenerator {
         }
 
         while (unusedNodes.size() > 0) {
+            System.out.println("unusedNodes");
             Vector startVector = getRandomVector(partialUsed, rand);
 
-            
             if (!curConnections.containsKey(startVector)) {
                 curConnections.put(startVector, new ArrayList<Vector>());
             }
 
             Vector targetVector = getRandomVector(unusedNodes, rand);
-            
+
             if (!curConnections.containsKey(targetVector)) {
                 curConnections.put(targetVector, new ArrayList<Vector>());
             }
-            
+
             curConnections.get(startVector).add(targetVector);
             curConnections.get(targetVector).add(startVector);
             unusedNodes.remove(targetVector);
-            if(curConnections.get(targetVector).size() == wantedConnections.get(targetVector)){
+
+            if (curConnections.get(targetVector).size() == wantedConnections.get(targetVector)) {
                 filled.add(targetVector);
+            } else {
+                partialUsed.add(targetVector);
+            }
+
+            if (curConnections.get(startVector).size() == wantedConnections.get(startVector)) {
+                filled.add(startVector);
+            }
+        }
+
+        while (partialUsed.size() > 0) {
+            System.out.println("partialused");
+            Vector startVector = getRandomVector(partialUsed, rand);
+            Vector targetVector = getClosestVector(partialUsed, startVector, rand);
+            if(targetVector == null){
+                targetVector = startVector;
+            }
+            if (!(startVector == targetVector && curConnections.get(startVector).size() >= 3)) {
+
+                curConnections.get(startVector).add(targetVector);
+                curConnections.get(targetVector).add(startVector);
+
+                if (curConnections.get(startVector).size() >= wantedConnections.get(startVector)) {
+                    filled.add(startVector);
+                    partialUsed.remove(startVector);
+                }
+
+                if (curConnections.get(targetVector).size() >= wantedConnections.get(targetVector)) {
+                    filled.add(targetVector);
+                    partialUsed.remove(targetVector);
+                }
+            }
+
+            if (partialUsed.size() == 1) {
+                for (Vector vector : partialUsed) {
+                    if (curConnections.get(vector).size() >= 3) {
+                        filled.add(vector);
+                        partialUsed.remove(vector);
+                    }
+                }
+            }
+        }
+
+        for (Vector vector : curConnections.keySet()) {
+            for (int i = 0; i < curConnections.get(vector).size(); i++) {
+                Vector v = curConnections.get(vector).get(i);
+                createPath(tiles, vector, v, rand);
+                curConnections.get(vector).remove(v);
+                curConnections.get(v).remove(vector);
             }
         }
     }
@@ -192,9 +254,9 @@ public class RandomMapGenerator {
     private Tile[][] fillWalls(Tile[][] tiles) {
 
         Tile[][] encappedTiles = new Tile[tiles.length + 2][tiles[0].length + 2];
-        for (int x = 1; x < encappedTiles.length - 1; x++) {
-            for (int y = 1; y < encappedTiles.length - 1; y++) {
-                encappedTiles[x][y] = tiles[x - 1][y - 1];
+        for (int x = 0; x < tiles.length; x++) {
+            for (int y = 0; y < tiles[0].length; y++) {
+                encappedTiles[x + 1][y + 1] = tiles[x][y];
             }
         }
 
@@ -241,6 +303,68 @@ public class RandomMapGenerator {
         return null;
     }
 
+    private void createPath(Tile[][] tiles, Vector vector, Vector v, Random rand) {
+
+        Vector cur = vector;
+        Vector to = cur.getVectorTo(v);
+        while (to.x != 0 || to.y != 0) {
+            ArrayList<Direction> possDir = new ArrayList();
+            if (to.x > 0) {
+                possDir.add(Direction.EAST);
+            } else if (to.x < 0) {
+                possDir.add(Direction.WEST);
+            }
+
+            if (to.y > 0) {
+                possDir.add(Direction.SOUTH);
+            } else if (to.y < 0) {
+                possDir.add(Direction.NORTH);
+            }
+
+            Direction dir = possDir.get(rand.nextInt(possDir.size()));
+            switch (dir) {
+                case EAST:
+                    cur = cur.addVector(new Vector(1, 0));
+                    break;
+                case WEST:
+                    cur = cur.addVector(new Vector(-1, 0));
+                    break;
+                case NORTH:
+                    cur = cur.addVector(new Vector(0, -1));
+                    break;
+                case SOUTH:
+                    cur = cur.addVector(new Vector(0, 1));
+                    break;
+            }
+            System.out.println(dir);
+            System.out.println(cur);
+            Tile tile = tiles[cur.x][cur.y];
+            if (tile != Tile.GHOST && tile != Tile.PACMAN) {
+                tiles[cur.x][cur.y] = Tile.EMPTY;
+            }
+            to = cur.getVectorTo(v);
+        }
+    }
+
+    private Vector getClosestVector(Set<Vector> partialUsed, Vector vector, Random rand) {
+        Vector smallest = null;
+        Vector toSmallest = null;
+        
+        for (Vector v : partialUsed) {
+            if (v != vector) {
+                Vector to = vector.getVectorTo(v);
+                
+                if (smallest == null ||Math.abs(to.x) + Math.abs(to.y) < Math.abs(toSmallest.x) + Math.abs(toSmallest.y)) {
+                    smallest = v;
+                    toSmallest = to;
+                
+                }
+            }
+        }
+        System.out.println(smallest);
+        return smallest;
+    }
+
     private class Vector {
 
         int x;
@@ -252,7 +376,7 @@ public class RandomMapGenerator {
         }
 
         public Vector addVector(Vector v1) {
-            return new Vector(this.x + v1.x, y + v1.y);
+            return new Vector(this.x + v1.x, this.y + v1.y);
         }
 
         public Vector getVectorTo(Vector v1) {

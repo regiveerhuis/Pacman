@@ -42,6 +42,10 @@ public class Game extends Observable implements ActionListener, Observer {
     }
 
     protected void loadLevel(Level level) {
+        if (timer != null) {
+            timer.stop();
+        }
+        timer = new Timer(TIMER_RESOLUTION, this);
 
         playGround = new PlayGround(new XMLLevelReader().loadNormalLevel(level), this);
         playGround.addObserver(this);
