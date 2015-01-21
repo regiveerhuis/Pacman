@@ -11,17 +11,21 @@ import View.GameFrame;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Logger;
 import javax.swing.Timer;
 
 /**
  *
  * @author Regi
  */
-public class Game extends Observable implements ActionListener, Observer {
+public class Game extends Observable implements KeyListener, ActionListener, Observer {
 
+    ArrayList<KeyListener> keyListeners = new ArrayList();
     private PlayGround playGround;
     private Timer timer;
     private Player player;
@@ -42,13 +46,11 @@ public class Game extends Observable implements ActionListener, Observer {
     }
 
     protected void loadLevel(Level level) {
-        if (timer != null) {
-            timer.stop();
-        }
+        stop();
         timer = new Timer(TIMER_RESOLUTION, this);
-
         playGround = new PlayGround(new XMLLevelReader().loadNormalLevel(level), this);
         playGround.addObserver(this);
+
     }
 
     public void draw(Graphics g) {
@@ -56,8 +58,7 @@ public class Game extends Observable implements ActionListener, Observer {
     }
 
     public void addKeyListener(KeyListener keyListener) {
-        setChanged();
-        notifyObservers(keyListener);
+        keyListeners.add(keyListener);
     }
 
     public void addTimerListener(TimerListenerHelper listener) {
@@ -94,33 +95,65 @@ public class Game extends Observable implements ActionListener, Observer {
         timer.start();
     }
 
+    public void stop() {
+        if (timer != null) {
+            timer.stop();
+        }
+        timer = null;
+        if (keyListeners != null) {
+            keyListeners.clear();
+        }
+    }
+
     @Override
     public void update(Observable obs, Object obj) {
-        obs.getClass().toString();
+
         if (obs instanceof PlayGround) {
-
             if (level.ordinal() >= Level.values().length - 1) {
+                //game over: no more levels
+                stop();
                 notifyObservers(true);
-
             } else {
                 level = level.values()[level.ordinal() + 1];
+                notifyObservers(false);
                 loadLevel(level);
-
             }
-        } else {
+
+        } else if (obs instanceof Player) {
             setChanged();
-            if ((int) obj == 0) {
+            if ((int) obj <= 0) {
+                //game over: no more lives
+                stop();
                 notifyObservers(true);
             } else {
                 notifyObservers(false);
             }
         }
     }
-    
-    
+
     protected void setPlayGround(PlayGround playGround) {
         this.playGround = playGround;
     }
-    
+
+    @Override
+    public void keyTyped(KeyEvent ke) {
+        for (KeyListener listener : keyListeners) {
+            listener.keyTyped(ke);
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent ke) {
+        for (KeyListener listener : keyListeners) {
+            listener.keyPressed(ke);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent ke) {
+        for (KeyListener listener : keyListeners) {
+            listener.keyReleased(ke);
+        }
+    }
 
 }

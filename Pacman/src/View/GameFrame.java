@@ -32,6 +32,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         initComponents();
         game = new RandomGame(this);
         setFocusable(true);
+        addKeyListener(game);
     }
 
     /**
@@ -203,6 +204,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_jButtonResetActionPerformed
 
     private void stop(){
+        game.stop();
         MenuFrame menu = new MenuFrame();
         menu.setVisible(true);
         this.dispose();
