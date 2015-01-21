@@ -54,6 +54,9 @@ public abstract class TraversableCell extends Cell {
             GameElementDeathEvent e = elements.get(i).moverEnteredCell(mover);
 
             if (e != null) {
+                if(elements.indexOf(e) <= i){
+                    i--;
+                }
                 removeElement(e.GetElement());
                 if (e.GetElement() == mover) {
                     break;

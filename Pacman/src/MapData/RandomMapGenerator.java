@@ -34,85 +34,7 @@ public class RandomMapGenerator {
         int pacmanY = rand.nextInt(tiles[0].length);
         tiles[pacmanX][pacmanY] = Tile.PACMAN;
         nodes.add(new Vector(pacmanX, pacmanY));
-        int ghostX = 0;
-        int ghostY = 0;
 
-        if (ghostsTogether) {
-            int ghostXBefore = -1;
-            int ghostXAfter = -1;
-
-            if (pacmanX - minimumGhostDistance > 0) {
-                ghostXBefore = rand.nextInt(pacmanX - minimumGhostDistance);
-            }
-
-            if (tiles.length - pacmanX - minimumGhostDistance > 0) {
-                ghostXAfter = rand.nextInt(tiles.length - pacmanX - minimumGhostDistance) + pacmanX + minimumGhostDistance;
-            }
-            ghostX = rand.nextBoolean() && ghostXBefore != -1 ? ghostXBefore : ghostXAfter;
-            if (ghostXAfter == -1) {
-                throw new IllegalStateException("Map Not Large Enough");
-            }
-            int ghostYBefore = -1;
-            int ghostYAfter = -1;
-            if (pacmanY - minimumGhostDistance > 0) {
-                ghostYBefore = rand.nextInt(pacmanY - minimumGhostDistance);
-            }
-            if (tiles[0].length - pacmanY - minimumGhostDistance > 0) {
-                ghostYAfter = rand.nextInt(tiles[0].length - pacmanY - minimumGhostDistance) + pacmanY + minimumGhostDistance;
-            }
-            ghostY = rand.nextBoolean() && ghostYBefore != -1 ? ghostYBefore : ghostYAfter;
-            if (ghostYAfter == -1) {
-                throw new IllegalStateException("Map Not Large Enough");
-            }
-            Vector ghostBasePosition = new Vector(ghostX, ghostY);
-            nodes.add(ghostBasePosition);
-            tiles[ghostBasePosition.x][ghostBasePosition.y] = Tile.GHOST;
-
-            ArrayList<Direction> directionsX = new ArrayList();
-            ArrayList<Direction> directionsY = new ArrayList();
-
-            if (ghostY > 0) {
-                directionsY.add(Direction.NORTH);
-            }
-            if (ghostY < tiles.length - 1) {
-                directionsY.add(Direction.SOUTH);
-            }
-            if (ghostX > 0) {
-                directionsX.add(Direction.WEST);
-            }
-            if (ghostX < tiles[0].length - 1) {
-                directionsX.add(Direction.EAST);
-            }
-
-            Direction xDirection = directionsX.get(rand.nextInt(directionsX.size()));
-            Direction yDirection = directionsY.get(rand.nextInt(directionsY.size()));
-            Vector[] ghostPositions = new Vector[3];
-
-            if (xDirection == Direction.WEST) {
-                ghostPositions[0] = new Vector(-1, 0);
-                if (yDirection == Direction.NORTH) {
-                    ghostPositions[1] = new Vector(0, -1);
-                    ghostPositions[2] = new Vector(-1, -1);
-
-                } else {
-                    ghostPositions[1] = new Vector(0, 1);
-                    ghostPositions[2] = new Vector(-1, 1);
-                }
-            } else {
-                ghostPositions[0] = new Vector(1, 0);
-                if (yDirection == Direction.NORTH) {
-                    ghostPositions[1] = new Vector(0, -1);
-                    ghostPositions[2] = new Vector(1, -1);
-                } else {
-                    ghostPositions[1] = new Vector(0, -1);
-                    ghostPositions[2] = new Vector(1, 1);
-                }
-            }
-            for (Vector relGhostPos : ghostPositions) {
-                Vector ghostPos = ghostBasePosition.addVector(relGhostPos);
-                tiles[ghostPos.x][ghostPos.y] = Tile.GHOST;
-            }
-        }
         Vector[] loc = new Vector[4];
 
         loc[0] = new Vector(rand.nextInt(tiles.length), tiles[0].length - 1);
@@ -141,7 +63,35 @@ public class RandomMapGenerator {
 
         createPaths(tiles, nodes, rand);
         tiles = fillWalls(tiles);
-
+        for (int i = 0; i < 4; i++) {          
+            ArrayList<Vector> possLocs = new ArrayList<>();
+            xLoop:
+            for (int x = 0; x < tiles.length; x++) {
+                for(int y =0; y<tiles[0].length; y++){
+                    if(y >= pacmanY + minimumGhostDistance || y <= pacmanY - minimumGhostDistance || x >= pacmanX + minimumGhostDistance || x <= pacmanY - minimumGhostDistance){
+                        if(tiles[x][y] == Tile.WALL){
+                            if(x > 0 && tiles[x-1][y] != Tile.WALL){
+                                possLocs.add(new Vector(x,y));
+                            }
+                            if(x < tiles.length - 1 && tiles[x+1][y] != Tile.WALL){
+                                possLocs.add(new Vector(x,y));
+                            }
+                            if(y > 0 && tiles[x][y-1] != Tile.WALL){
+                                possLocs.add(new Vector(x,y));
+                            }
+                            if(y < tiles[0].length - 1 && tiles[x][y+1] != Tile.WALL){
+                                possLocs.add(new Vector(x,y));
+                            }
+                        }
+                    }
+                } 
+            }
+            if(possLocs.size() < 1){
+                throw new IllegalStateException("No place for ghosts!");
+            }
+            Vector ghostLoc = possLocs.get(rand.nextInt(possLocs.size()));
+            tiles[ghostLoc.x][ghostLoc.y] = Tile.GHOST;
+        }
         putSuperDots(tiles, superDotAmount, rand);
 
         for (Tile[] t : tiles) {
@@ -212,7 +162,7 @@ public class RandomMapGenerator {
             System.out.println("partialused");
             Vector startVector = getRandomVector(partialUsed, rand);
             Vector targetVector = getClosestVector(partialUsed, startVector, rand);
-            if(targetVector == null){
+            if (targetVector == null) {
                 targetVector = startVector;
             }
             if (!(startVector == targetVector && curConnections.get(startVector).size() >= 3)) {
@@ -349,15 +299,15 @@ public class RandomMapGenerator {
     private Vector getClosestVector(Set<Vector> partialUsed, Vector vector, Random rand) {
         Vector smallest = null;
         Vector toSmallest = null;
-        
+
         for (Vector v : partialUsed) {
             if (v != vector) {
                 Vector to = vector.getVectorTo(v);
-                
-                if (smallest == null ||Math.abs(to.x) + Math.abs(to.y) < Math.abs(toSmallest.x) + Math.abs(toSmallest.y)) {
+
+                if (smallest == null || Math.abs(to.x) + Math.abs(to.y) < Math.abs(toSmallest.x) + Math.abs(toSmallest.y)) {
                     smallest = v;
                     toSmallest = to;
-                
+
                 }
             }
         }
