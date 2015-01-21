@@ -113,4 +113,8 @@ public class PathGuide implements Guider {
     public boolean onSamePath(PathGuide guider) {
         return guider.path == path;
     }
+    
+    public Path getPath() {
+        return this.path;
+    }
 }

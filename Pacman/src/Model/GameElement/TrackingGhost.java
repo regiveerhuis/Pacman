@@ -20,7 +20,7 @@ public class TrackingGhost extends Ghost{
 
     public TrackingGhost(Color color, TraversableCell startCell, PathingTarget target, PlayGround playGround, int walkSpeed) {
         super(color, startCell, walkSpeed);
-        setPathFinder(new ShortestPathFinder(target, playGround));
+        setPathFinder(new ShortestPathFinderA(target, playGround));
     }
     
     @Override
