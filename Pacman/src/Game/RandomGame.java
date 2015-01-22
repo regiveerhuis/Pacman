@@ -8,13 +8,11 @@ package Game;
 
 import MapData.LevelData;
 import MapData.RandomMapGenerator;
-import MapData.XMLLevelReader;
 import MapData.XMLLevelWriter;
 import Model.PlayGround;
 import View.GameFrame;
 import java.util.Observable;
 import java.util.Random;
-import javax.swing.Timer;
 
 /**
  *

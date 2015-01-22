@@ -9,7 +9,6 @@ import Game.TimerListenerHelper;
 import Model.Cell.Cell;
 import Model.Direction;
 import Model.Cell.TraversableCell;
-import View.RedrawEvent;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;

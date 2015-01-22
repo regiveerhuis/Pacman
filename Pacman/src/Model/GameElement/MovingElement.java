@@ -6,10 +6,7 @@ package Model.GameElement;
 import Model.Direction;
 import Model.Cell.Guider;
 import Model.Cell.TraversableCell;
-import View.RedrawEvent;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import View.RedrawListener;
 
 /**
  * @author Matthias

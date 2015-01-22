@@ -3,7 +3,6 @@
  */
 package View;
 
-import Game.GameType;
 import java.io.File;
 import javax.swing.JFileChooser;
 

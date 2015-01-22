@@ -4,7 +4,6 @@
 package View;
 
 import Game.Game;
-import Game.GameType;
 import Game.LoadedGame;
 import Game.RandomGame;
 import java.awt.Dimension;
@@ -42,7 +41,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
 
     }
     
-    public void init(String levelName){
+    private void init(String levelName){
                 initComponents();
         if(type == GameType.LOAD){
             game = new LoadedGame(this, levelName);
@@ -50,7 +49,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         }
     }
 
-    public void init() {
+    private void init() {
         initComponents();
 
         if (type == GameType.RANDOM) {
