@@ -23,26 +23,21 @@ import java.util.Set;
  */
 public class ShortestPathFinderA extends PathFinder {
 
-    private final List<Node> nodes;
     private final List<Path> paths;
     private Set<Node> closedSet;
     private Set<Node> openSet;
     private Map<Node, Node> cameFrom;
     private Map<Node, Double> distFromStart;
     private Map<Node, Double> heuristicDistToGoal;
-    private boolean ghostOnNode;
-    private boolean pacmanOnNode;
     private Node targetNode;
-    private TraversableCell lastPacmanLocation;
     private PathingWrapper bestPath;
 
     public ShortestPathFinderA(PathingTarget target, PlayGround playGround) {
         super(target);
-        this.nodes = new ArrayList(playGround.getNodes());
         this.paths = new ArrayList(playGround.getPaths());
     }
 
-    public Node execute(Guider guider) {
+    private Node execute(Guider guider) {
         closedSet = new HashSet();
         openSet = new HashSet();
         cameFrom = new HashMap();
@@ -50,23 +45,18 @@ public class ShortestPathFinderA extends PathFinder {
         heuristicDistToGoal = new HashMap();
 
         if (guider.getCurrentCell() instanceof Node) {
-            ghostOnNode = true;
             Node ghostNode = ((Node) guider.getCurrentCell());
             openSet.add(ghostNode);
             distFromStart.put(ghostNode, 0d);
             heuristicDistToGoal.put(ghostNode, getShortestDist(ghostNode));
         } else {
             getTwoStartNodes(guider);
-            ghostOnNode = false;
         }
 
         if (getTarget().getGuider().getCurrentCell() instanceof Node) {
-            pacmanOnNode = true;
             targetNode = (Node) getTarget().getGuider().getCurrentCell();
         } else {
-            pacmanOnNode = false;
             List<Node> closestNodes = getTarget().getGuider().getClosestNodes();
-            
             targetNode = closestNodes.get(0);
             if(getStraightLine(guider, targetNode) > getStraightLine(guider, closestNodes.get(1))) {
                 targetNode = closestNodes.get(1);
@@ -183,8 +173,7 @@ public class ShortestPathFinderA extends PathFinder {
 
     private int getDistance(Node node, Node target) {
         for (Path path : paths) {
-            if (path.getStartNode().equals(node)
-                    && path.getEndNode().equals(target)) {
+            if (path.getStartNode().equals(node) && path.getEndNode().equals(target)) {
                 return path.getLength();
             } else if (path.getEndNode().equals(node) && path.getStartNode().equals(target)) {
                 return path.getLength();
@@ -282,15 +271,9 @@ public class ShortestPathFinderA extends PathFinder {
     private class PathingWrapper {
 
         private ArrayList<Node> nodes = new ArrayList();
-        private int totalDistance = 0;
 
         public void add(Node node) {
             nodes.add(node);
-            //totalDistance += distance.get(node);
-        }
-
-        public int getDistance() {
-            return totalDistance;
         }
 
         public ArrayList<Node> getNodes() {
