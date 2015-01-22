@@ -73,6 +73,7 @@ public class Node extends TraversableCell implements Guider {
         for (Direction direction : getPossibleDirections()) {
 
             if (!isPathValid(direction)) {
+                
                 makeNodePath(cells, cellData, direction);
             }
         }

@@ -6,8 +6,10 @@
 
 package Game;
 
+import MapData.LevelData;
 import MapData.RandomMapGenerator;
 import MapData.XMLLevelReader;
+import MapData.XMLLevelWriter;
 import Model.PlayGround;
 import View.GameFrame;
 import java.util.Observable;
@@ -21,6 +23,7 @@ import javax.swing.Timer;
 public class RandomGame extends Game{
 
     RandomMapGenerator mapGen;
+    LevelData data;
     
     public RandomGame(GameFrame gameFrame) {
         super(gameFrame);
@@ -31,10 +34,17 @@ public class RandomGame extends Game{
     protected void loadLevel(Level level){
         Random rand = new Random();
         mapGen = new RandomMapGenerator();
-        
-        PlayGround playGround = new PlayGround(mapGen.getMap(20, 10, rand.nextInt()), this);
+        data = mapGen.getMap(10, 10, rand.nextInt());
+        PlayGround playGround = new PlayGround(data, this);
         setPlayGround(playGround);
         playGround.addObserver(this);
+                
+    }
+    
+    public boolean save(String fileName){
+        
+        new XMLLevelWriter().writeLevel(data, fileName);
+        return true;
     }
     
     @Override

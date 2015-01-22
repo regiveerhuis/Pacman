@@ -90,16 +90,10 @@ public class XMLLevelWriter {
         rootElement.appendChild(xSize);
         rootElement.appendChild(ySize);
 
-        Tile[][] cells = new Tile[tiles[0].length][tiles.length];
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles[0].length; j++) {
-                cells[j][i] = tiles[i][j];
-            }
-        }
-        xSize.appendChild(doc.createTextNode(String.valueOf(cells.length)));
-        ySize.appendChild(doc.createTextNode(String.valueOf(cells[0].length)));
+        xSize.appendChild(doc.createTextNode(String.valueOf(tiles.length)));
+        ySize.appendChild(doc.createTextNode(String.valueOf(tiles[0].length)));
 
-        for (Tile[] t : cells) {
+        for (Tile[] t : tiles) {
             Element row = doc.createElement("row");
             rootElement.appendChild(row);
 

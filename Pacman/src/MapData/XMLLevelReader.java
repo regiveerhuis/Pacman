@@ -27,16 +27,16 @@ public class XMLLevelReader {
 
     private final String randomLevelPath = "levels/savedLevels/";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Tile[][] tiles = new XMLLevelReader().loadRandomLevel("test1247").getCellData();
-        for(Tile[] t : tiles){
-            for(Tile tile : t){
+        for (Tile[] t : tiles) {
+            for (Tile tile : t) {
                 System.out.print(tile.name() + "\t");
             }
             System.out.println("");
         }
     }
-    
+
     public LevelData loadNormalLevel(Level level) {
         File file = new File(standardLevelPath + standardLevelName);
         Document dom = readDocument(file);
@@ -51,17 +51,12 @@ public class XMLLevelReader {
     }
 
     public LevelData loadRandomLevel(String name) {
-        String fileName = name + ".xml";
+        String fileName = name;
         File file = new File(randomLevelPath + fileName);
         Document dom = readDocument(file);
         Tile[][] unTransposed = parseDocument(dom, name);
-        Tile[][] transposed = new Tile[unTransposed[0].length][unTransposed.length];
-        for (int i = 0; i < unTransposed.length; i++) {
-            for (int j = 0; j < unTransposed[0].length; j++) {
-                transposed[j][i] = unTransposed[i][j];
-            }
-        }
-        return new LevelData(transposed);
+        
+        return new LevelData(unTransposed);
     }
 
     private Document readDocument(File file) {
@@ -89,14 +84,19 @@ public class XMLLevelReader {
     private Tile[][] parseDocument(Document dom, String levelName) {
         Element rootElement = dom.getDocumentElement();
         Element levelElement = null;
+        if (levelName.contains(".xml")) {
+            levelName = levelName.substring(0, levelName.indexOf(".xml"));
+        }
         System.out.println(rootElement.getNodeName());
         if (!rootElement.getNodeName().equals(levelName)) {
+            System.out.println("root:" + rootElement.getNodeName());
+            System.out.println("level: " + levelName);
             NodeList levelElements = rootElement.getElementsByTagName(levelName);
-            if (levelElements == null) {
+            if (levelElements == null || levelElements.getLength() == 0) {
                 throw new RuntimeException("Corrupt levelfile -- no such level");
             }
 
-            if (levelElements.getLength() != 1) {
+            if (levelElements.getLength() > 1) {
                 throw new RuntimeException("Corrupt levelfile -- multiple levels");
             }
 

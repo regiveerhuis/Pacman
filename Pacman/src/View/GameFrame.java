@@ -4,12 +4,15 @@
 package View;
 
 import Game.Game;
+import Game.GameType;
+import Game.LoadedGame;
 import Game.RandomGame;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,18 +22,43 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
 
     private Game game;
     private boolean paused = false;
+    GameType type;
 
     /**
      * Creates new form GameFrame
      */
-    public GameFrame() {
+    public GameFrame(GameType type) {
+
+        this.type = type;
         init();
 
+    }
+    
+    public GameFrame(GameType type, String levelName) {
+
+        this.type = type;
+        System.out.println(levelName);
+        init(levelName);
+
+    }
+    
+    public void init(String levelName){
+                initComponents();
+        if(type == GameType.LOAD){
+            game = new LoadedGame(this, levelName);
+            jButtonSave.setVisible(false);
+        }
     }
 
     public void init() {
         initComponents();
-        game = new RandomGame(this);
+
+        if (type == GameType.RANDOM) {
+            game = new RandomGame(this);
+        } else if (type == GameType.NORMAL) {
+            game = new Game(this);
+            jButtonSave.setVisible(false);
+        }
         setFocusable(true);
         addKeyListener(game);
     }
@@ -48,6 +76,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         jButtonPause = new javax.swing.JButton();
         jButtonReset = new javax.swing.JButton();
         jButtonStop = new javax.swing.JButton();
+        jButtonSave = new javax.swing.JButton();
         jPanelInfo = new javax.swing.JPanel();
         jLabelScoreText = new javax.swing.JLabel();
         jLabelLivesText = new javax.swing.JLabel();
@@ -78,6 +107,13 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
             }
         });
 
+        jButtonSave.setText("Save Map");
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelMenuLayout = new javax.swing.GroupLayout(jPanelMenu);
         jPanelMenu.setLayout(jPanelMenuLayout);
         jPanelMenuLayout.setHorizontalGroup(
@@ -89,7 +125,9 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
                 .addComponent(jButtonReset)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonStop)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonSave)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanelMenuLayout.setVerticalGroup(
             jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,7 +136,8 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
                 .addGroup(jPanelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonPause)
                     .addComponent(jButtonReset)
-                    .addComponent(jButtonStop))
+                    .addComponent(jButtonStop)
+                    .addComponent(jButtonSave))
                 .addContainerGap())
         );
 
@@ -162,7 +201,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanelMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                         .addComponent(jPanelInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(gamePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -186,11 +225,11 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_jButtonStopActionPerformed
 
     private void jButtonPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPauseActionPerformed
-        if(!paused){
+        if (!paused) {
             pause();
             paused = true;
             jButtonPause.setText("Resume");
-        }else{
+        } else {
             resume();
             paused = false;
             jButtonPause.setText("Pause");
@@ -198,18 +237,25 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_jButtonPauseActionPerformed
 
     private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResetActionPerformed
-        GameFrame frame = new GameFrame();
+        GameFrame frame = new GameFrame(GameType.RANDOM);
         frame.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonResetActionPerformed
 
-    private void stop(){
+    private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        if (type == GameType.RANDOM) {
+            String filename = JOptionPane.showInputDialog(this, "Please enter filename");
+            ((RandomGame) game).save(filename);
+        }
+    }//GEN-LAST:event_jButtonSaveActionPerformed
+
+    private void stop() {
         game.stop();
         MenuFrame menu = new MenuFrame();
         menu.setVisible(true);
         this.dispose();
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -218,6 +264,7 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
     private View.GamePanel gamePanel1;
     private javax.swing.JButton jButtonPause;
     private javax.swing.JButton jButtonReset;
+    private javax.swing.JButton jButtonSave;
     private javax.swing.JButton jButtonStop;
     private javax.swing.JLabel jLabelLivesDisplay;
     private javax.swing.JLabel jLabelLivesText;
@@ -239,8 +286,8 @@ public class GameFrame extends javax.swing.JFrame implements Observer {
         if (game != null) {
             jLabelLivesDisplay.setText(String.valueOf(game.getLives()));
             jLabelScoreDisplay.setText(String.valueOf(game.getPoints()));
-            if(o1 instanceof Boolean){
-                if((Boolean)o1){
+            if (o1 instanceof Boolean) {
+                if ((Boolean) o1) {
                     stop();
                 }
             }
