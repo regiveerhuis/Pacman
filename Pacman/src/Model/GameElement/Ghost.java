@@ -60,7 +60,6 @@ public abstract class Ghost extends MovingElement {
         if (mover == this) {
             return null;
         }
-        System.out.println("something happening");
         if (mover instanceof Pacman) {
             if (((Pacman) mover).isInvincible()) {
                 this.die();
