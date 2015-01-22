@@ -10,6 +10,7 @@ import MapData.LevelData;
 import MapData.XMLLevelReader;
 import Model.PlayGround;
 import View.GameFrame;
+import java.util.Observable;
 
 /**
  *
@@ -24,14 +25,23 @@ public class LoadedGame extends Game {
     }
     
     @Override
-    public void loadLevel(Level level){
+    protected void loadLevel(Level level){
         
     }
-    public void init(String levelName){
+    
+    private void init(String levelName){
         LevelData data = new XMLLevelReader().loadRandomLevel(levelName);
         PlayGround playGround = new PlayGround(data, this);
         setPlayGround(playGround);
         playGround.addObserver(this);
     }
     
+    @Override
+    public void update(Observable obs, Object obj){
+        if(obs instanceof PlayGround){
+            stop();
+        }else{
+            super.update(obs, obj);
+        }
+    }
 }

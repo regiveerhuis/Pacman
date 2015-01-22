@@ -8,14 +8,11 @@ package Model.Cell;
 import Model.Direction;
 import Model.GameElement.GameElement;
 import Model.GameElement.GameElementDeathEvent;
-import Model.GameElement.Ghost;
 import Model.GameElement.MovingElement;
-import Model.GameElement.Pacman;
 import Model.GameElement.StaticElement;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

@@ -33,6 +33,7 @@ public abstract class Ghost extends MovingElement {
         listenHelper = new TimerListenerHelper(walkSpeed, this);
     }
 
+    @Override
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillArc(5, 5, Cell.CELL_SIZE - 10, Cell.CELL_SIZE, 0, 180);

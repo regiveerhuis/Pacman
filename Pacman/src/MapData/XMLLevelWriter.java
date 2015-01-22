@@ -29,15 +29,6 @@ public class XMLLevelWriter {
 
     private final String writePath = "levels/savedLevels/";
 
-    public static void main(String[] args) {
-        Tile[][] tiles = {{Tile.EMPTY, Tile.WALL},
-        {Tile.GHOST, Tile.SUPER_DOT}};
-
-        Random rand = new Random();
-
-        new XMLLevelWriter().writeLevel(new LevelData(tiles), "test" + rand.nextInt(10000));
-    }
-
     public void writeLevel(LevelData levelData, String name) {
         String fileName = name + ".xml";
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

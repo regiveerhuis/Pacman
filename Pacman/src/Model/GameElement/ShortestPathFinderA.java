@@ -60,12 +60,12 @@ public class ShortestPathFinderA extends PathFinder {
             ghostOnNode = false;
         }
 
-        if (target.getGuider().getCurrentCell() instanceof Node) {
+        if (getTarget().getGuider().getCurrentCell() instanceof Node) {
             pacmanOnNode = true;
-            targetNode = (Node) target.getGuider().getCurrentCell();
+            targetNode = (Node) getTarget().getGuider().getCurrentCell();
         } else {
             pacmanOnNode = false;
-            List<Node> closestNodes = target.getGuider().getClosestNodes();
+            List<Node> closestNodes = getTarget().getGuider().getClosestNodes();
             
             targetNode = closestNodes.get(0);
             if(getStraightLine(guider, targetNode) > getStraightLine(guider, closestNodes.get(1))) {
@@ -83,7 +83,7 @@ public class ShortestPathFinderA extends PathFinder {
             findNewRoute(current);
         }
         
-        return target.getGuider().getClosestNodes().get(0);
+        return getTarget().getGuider().getClosestNodes().get(0);
     }
     
     private double getStraightLine(Guider guider, Node node) {
@@ -174,8 +174,8 @@ public class ShortestPathFinderA extends PathFinder {
     }
 
     private double getShortestDist(Node current) {
-        double xDist = Math.abs(current.getPositionX() - target.getGuider().getCurrentCell().getPositionX());
-        double yDist = Math.abs(current.getPositionY() - target.getGuider().getCurrentCell().getPositionY());
+        double xDist = Math.abs(current.getPositionX() - getTarget().getGuider().getCurrentCell().getPositionX());
+        double yDist = Math.abs(current.getPositionY() - getTarget().getGuider().getCurrentCell().getPositionY());
         double distSquared = (Math.pow(xDist, 2) + Math.pow(yDist, 2));
         double dist = Math.sqrt(distSquared);
         return dist;
@@ -195,20 +195,20 @@ public class ShortestPathFinderA extends PathFinder {
 
     @Override
     protected Direction getMove(Guider guider) {
-        if(guider instanceof PathGuide && target.getGuider() instanceof PathGuide) {
-            if( ((PathGuide) guider).onSamePath(((PathGuide) target.getGuider())) ) {
+        if(guider instanceof PathGuide && getTarget().getGuider() instanceof PathGuide) {
+            if( ((PathGuide) guider).onSamePath(((PathGuide) getTarget().getGuider())) ) {
                 return checkPathNonOnNode(guider);
             }
-        } else if (guider instanceof PathGuide && target.getGuider() instanceof Node) {
-            if( ((Node) target.getGuider()).getPaths().contains(((PathGuide) guider).getPath()) ) {
+        } else if (guider instanceof PathGuide && getTarget().getGuider() instanceof Node) {
+            if( ((Node) getTarget().getGuider()).getPaths().contains(((PathGuide) guider).getPath()) ) {
                 return checkPathPacmanOnNode(guider);
             }
-        } else if (guider instanceof Node && target.getGuider() instanceof PathGuide) {
-            if( ((Node) guider).getPaths().contains(((PathGuide) target.getGuider()).getPath()) ) {
+        } else if (guider instanceof Node && getTarget().getGuider() instanceof PathGuide) {
+            if( ((Node) guider).getPaths().contains(((PathGuide) getTarget().getGuider()).getPath()) ) {
                 return checkPathGhostOnNode(guider);
             }
         } else {
-            for(Path path : ((Node) target.getGuider()).getPaths()) {
+            for(Path path : ((Node) getTarget().getGuider()).getPaths()) {
                 if( ((Node) guider).getPaths().contains(path) ) {
                     return checkPathBothOnNodes(guider);
                 }
@@ -229,16 +229,16 @@ public class ShortestPathFinderA extends PathFinder {
     }
     
     private Direction checkPathBothOnNodes(Guider guider) {
-        return ((Node) guider).getDirectionOfNode((Node) target.getGuider());
+        return ((Node) guider).getDirectionOfNode((Node) getTarget().getGuider());
     }
     
     private Direction checkPathNonOnNode(Guider guider) {
         List<Node> closestNodes = guider.getClosestNodes();
         Node nodeA = closestNodes.get(0);
-        int distPacmanToNodeA = target.getGuider().distanceToNode(nodeA);
+        int distPacmanToNodeA = getTarget().getGuider().distanceToNode(nodeA);
         int distGhostToNodeA = guider.distanceToNode(nodeA);
         Node nodeB = closestNodes.get(0);
-        int distPacmanToNodeB = target.getGuider().distanceToNode(nodeB);
+        int distPacmanToNodeB = getTarget().getGuider().distanceToNode(nodeB);
         int distGhostToNodeB = guider.distanceToNode(nodeB);
         
         if(distPacmanToNodeA < distGhostToNodeA) {
@@ -253,7 +253,7 @@ public class ShortestPathFinderA extends PathFinder {
     private Direction checkPathGhostOnNode(Guider guider) {
         Path pacmanPath = null;
         for(Path path : ((Node) guider).getPaths()) {
-            if( ((PathGuide) target.getGuider()).getPath() == path) {
+            if( ((PathGuide) getTarget().getGuider()).getPath() == path) {
                 pacmanPath = path;
             }
         }
@@ -261,10 +261,10 @@ public class ShortestPathFinderA extends PathFinder {
     }
     
     private Direction checkPathPacmanOnNode(Guider guider) {
-        return ((PathGuide) guider).getDirectionOfNode(((Node) target.getGuider()));
+        return ((PathGuide) guider).getDirectionOfNode(((Node) getTarget().getGuider()));
     }
     
-    public PathingWrapper getPath(Node targetNode) {
+    private PathingWrapper getPath(Node targetNode) {
         PathingWrapper pathingWrapper = new PathingWrapper();
         Node step = targetNode;
         // check if a path exists

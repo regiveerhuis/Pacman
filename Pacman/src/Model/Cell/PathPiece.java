@@ -29,15 +29,11 @@ public class PathPiece extends TraversableCell {
     }
 
     @Override
-    public String toString() {
-        return "pathpiece to " + forwardDirection + " and " + backwardDirection;
-    }
-
     public boolean isPossibleDirection(Direction direction) {
         return direction == forwardDirection || direction == backwardDirection;
     }
 
-    boolean isForwardDirection(Direction direction) {
+    public boolean isForwardDirection(Direction direction) {
         return direction == forwardDirection;
     }
 }

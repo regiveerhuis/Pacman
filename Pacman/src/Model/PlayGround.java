@@ -42,20 +42,14 @@ import java.util.Set;
 public class PlayGround extends Observable implements Observer {
 
     private Cell[][] cells;
-    private HashSet<Path> paths = new HashSet();
     private int startPacDotAmount = 0;
     private int pacDotAmount = 0;
     private boolean hasCherrySpawned = false;
-
-    public Cell[][] getCells() {
-        return cells;
-    }
 
     public PlayGround(LevelData levelData, Game game) {
         Tile[][] cellData = levelData.getCellData();
         cells = new Cell[cellData.length][cellData[0].length];
         createNodes(levelData);
-        indexPaths();
         int[] pacmanPosition = levelData.getIndexesOfType(Tile.PACMAN).get(0);
         TraversableCell pacmanStartCell = (TraversableCell) cells[pacmanPosition[0]][pacmanPosition[1]];
         Pacman pacman = new Pacman(pacmanStartCell, game.getPlayer());
@@ -63,7 +57,7 @@ public class PlayGround extends Observable implements Observer {
         if (pacmanStartCell instanceof Node) {
             pacman.setGuider((Node) pacmanStartCell);
         } else {
-            for (Path path : paths) {
+            for (Path path : getPaths()) {
                 if (path.containsCell(pacmanStartCell)) {
                     pacman.setGuider(new PathGuide(path, (PathPiece) pacmanStartCell));
                     break;
@@ -99,7 +93,7 @@ public class PlayGround extends Observable implements Observer {
             if (ghostStartCell[i] instanceof Node) {
                 ghost.setGuider((Node) ghostStartCell[i]);
             } else {
-                for (Path path : paths) {
+                for (Path path : getPaths()) {
                     if (path.containsCell(ghostStartCell[i])) {
                         ghost.setGuider(new PathGuide(path, (PathPiece) ghostStartCell[i]));
                         break;
@@ -139,20 +133,6 @@ public class PlayGround extends Observable implements Observer {
 
             }
         }
-    }
-
-    //Finds the path containing the cell given. returns null if the cell belongs to no path (e.g. if it does not exist, or if it is a node)
-    public Path findPathByCell(TraversableCell cell) {
-        if (cell instanceof Node) {
-            return null;
-        } else {
-            for (Path path : paths) {
-                if (path.containsCell(cell)) {
-                    return path;
-                }
-            }
-        }
-        return null;
     }
 
     //fills the Cell[][] array with walls and nodes
@@ -221,16 +201,6 @@ public class PlayGround extends Observable implements Observer {
 
     }
 
-    private void indexPaths() {
-        for (Cell[] c : cells) {
-            for (Cell cell : c) {
-                if (cell instanceof Node) {
-                    paths.addAll(((Node) cell).getPaths());
-                }
-            }
-        }
-    }
-
     @Override
     public void update(Observable o, Object o1) {
         pacDotAmount--;
@@ -274,6 +244,10 @@ public class PlayGround extends Observable implements Observer {
     }
 
     public HashSet<Path> getPaths() {
+        HashSet paths = new HashSet();
+        for(Node node:getNodes()){
+            paths.addAll(node.getPaths());
+        }
         return paths;
     }
 

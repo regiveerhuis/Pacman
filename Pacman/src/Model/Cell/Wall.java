@@ -18,11 +18,7 @@ public class Wall extends Cell {
     public Wall(int positionX, int positionY){
         super(positionX, positionY);
     }
-    
-    @Override
-    public String toString(){
-        return "Wall";
-    }
+
     
     @Override 
     public void draw(Graphics g){

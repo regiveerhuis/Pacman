@@ -44,6 +44,5 @@ public class Cherry extends StaticElement{
 
     @Override
     public void die() {
-       
     }
 }

@@ -19,7 +19,7 @@ import java.util.Random;
  */
 public abstract class PathFinder {
 
-    PathingTarget target;
+    private PathingTarget target;
 
     public PathFinder(PathingTarget target) {
         this.target = target;
@@ -30,10 +30,10 @@ public abstract class PathFinder {
     }
 
     public Direction getNextMove(Guider guider) {
-       if (target.moveTo()) {
+       if (getTarget().moveTo()) {
             return getMove(guider);
         } else {
-            TraversableCell targetCell = target.getGuider().getCurrentCell();
+            TraversableCell targetCell = getTarget().getGuider().getCurrentCell();
             TraversableCell curCell = guider.getCurrentCell();
             ArrayList<Direction> possDirs = new ArrayList(Arrays.asList(guider.getPossibleDirections()));
 

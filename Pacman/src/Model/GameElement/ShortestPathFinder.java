@@ -110,7 +110,7 @@ public class ShortestPathFinder extends PathFinder {
         }
     }
 
-    public PathingWrapper getPath(Node target) {
+    private PathingWrapper getPath(Node target) {
         PathingWrapper pathingWrapper = new PathingWrapper();
         Node step = target;
         // check if a path exists

@@ -38,6 +38,6 @@ public class PacDot extends StaticElement{
     }
 
     @Override
-    public void die() {setChanged(); notifyObservers();System.out.println("hello");}
+    public void die() {setChanged(); notifyObservers();}
     
 }

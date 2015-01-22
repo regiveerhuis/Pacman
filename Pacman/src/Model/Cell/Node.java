@@ -59,15 +59,6 @@ public class Node extends TraversableCell implements Guider {
         return paths.containsKey(direction) && paths.get(direction) != null;
     }
 
-    @Override
-    public String toString() {
-        String r = "node";
-        for (Direction d : paths.keySet()) {
-            r += ", " + d.toString().charAt(0);
-        }
-        return r;
-    }
-
     //makes, fills and returns a path.
     public void initNode(Cell[][] cells, Tile[][] cellData) {
         for (Direction direction : getPossibleDirections()) {

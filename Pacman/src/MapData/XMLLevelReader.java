@@ -24,18 +24,7 @@ public class XMLLevelReader {
 
     private final String standardLevelName = "levels.xml";
     private final String standardLevelPath = "levels/standardLevels/";
-
     private final String randomLevelPath = "levels/savedLevels/";
-
-    public static void main(String[] args) {
-        Tile[][] tiles = new XMLLevelReader().loadRandomLevel("test1247").getCellData();
-        for (Tile[] t : tiles) {
-            for (Tile tile : t) {
-                System.out.print(tile.name() + "\t");
-            }
-            System.out.println("");
-        }
-    }
 
     public LevelData loadNormalLevel(Level level) {
         File file = new File(standardLevelPath + standardLevelName);
@@ -148,11 +137,6 @@ public class XMLLevelReader {
         return textVal;
     }
 
-    /**
-     * I take a xml element and the tag name, look for the tag and get the text
-     * content i.e for <employee><name>John</name></employee> xml snippet if the
-     * Element points to employee node and tagName is 'name' I will return John
-     */
     private String getTextValue(Element ele, String tagName) {
         String textVal = null;
         NodeList nl = ele.getElementsByTagName(tagName);

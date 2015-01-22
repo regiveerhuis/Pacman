@@ -6,7 +6,6 @@
 
 package Model.GameElement;
 
-import java.util.Observable;
 import java.util.WeakHashMap;
 
 /**

@@ -23,9 +23,6 @@ public abstract class MovingElement extends GameElement implements ActionListene
     public MovingElement(TraversableCell startPosition){
         this.startPosition = startPosition;
     }
-    
-    @Override
-    public abstract void actionPerformed(ActionEvent e);
 
     public void move(Direction d) {
         guider.tryMove(d, this);

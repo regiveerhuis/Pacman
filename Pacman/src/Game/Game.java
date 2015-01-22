@@ -30,7 +30,7 @@ public class Game extends Observable implements KeyListener, ActionListener, Obs
     private Timer timer;
     private Player player;
     private Level level;
-    private static final int TIMER_RESOLUTION = 10;
+    private final int TIMER_RESOLUTION = 10;
 
     public Game(GameFrame gameFrame) {
         addObserver(gameFrame);

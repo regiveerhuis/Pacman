@@ -18,10 +18,7 @@ import java.util.Set;
  */
 public class RandomMapGenerator {
 
-    private int wallBlockSize = 4;
-    private int minimumGhostDistance = 0;
-    private boolean ghostsTogether = true;
-    private double correctChance = 0.6;
+    private int minimumGhostDistance = 5;
     private int superDotAmount = 4;
     private double connectivity = 0.3;
     private int nodeAmount = 8;

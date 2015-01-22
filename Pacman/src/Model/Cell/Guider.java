@@ -9,7 +9,6 @@ package Model.Cell;
 import Model.Direction;
 import Model.GameElement.MovingElement;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

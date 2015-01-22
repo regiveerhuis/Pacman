@@ -33,7 +33,7 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
         listenHelper = new TimerListenerHelper(walkSpeed, this);
     }
 
-    public void tryNextMove() {
+    private void tryNextMove() {
         if (!(nextDirection == null && curDirection == null)) {
             if (getGuider().isPossibleDirection(nextDirection)) {
                 curDirection = nextDirection;
@@ -77,25 +77,7 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
             }
         }
     }
-
-    /*
-     @Override
-     public void move(Direction direction) {
-     TraversableCell newCell = curCell.tryMove(direction);
-     if (newCell != null) {
-     curCell.removeMover(this);
-     curCell = newCell;
-     newCell.addMover(this);
-     }
-     }
-     */
-    /*
-     @Override
-     public void Redraw(RedrawEvent e) {
-
     
-     }
-     */
     @Override
     public void directionEvent(Direction direction) {
         nextDirection = direction;
