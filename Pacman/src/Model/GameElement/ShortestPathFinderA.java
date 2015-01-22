@@ -28,11 +28,13 @@ public class ShortestPathFinderA extends PathFinder {
     private Set<Node> closedSet;
     private Set<Node> openSet;
     private Map<Node, Node> cameFrom;
-    private Map<Node, Integer> distFromStart;
-    private Map<Node, Integer> heuristicDistToGoal;
+    private Map<Node, Double> distFromStart;
+    private Map<Node, Double> heuristicDistToGoal;
     private boolean ghostOnNode;
     private boolean pacmanOnNode;
-    private Set<Node> targetNodes;
+    private Node targetNode;
+    private TraversableCell lastPacmanLocation;
+    private PathingWrapper bestPath;
 
     public ShortestPathFinderA(PathingTarget target, PlayGround playGround) {
         super(target);
@@ -45,14 +47,13 @@ public class ShortestPathFinderA extends PathFinder {
         openSet = new HashSet();
         cameFrom = new HashMap();
         distFromStart = new HashMap();
-        targetNodes = new HashSet();
         heuristicDistToGoal = new HashMap();
 
         if (guider.getCurrentCell() instanceof Node) {
             ghostOnNode = true;
             Node ghostNode = ((Node) guider.getCurrentCell());
             openSet.add(ghostNode);
-            distFromStart.put(ghostNode, 0);
+            distFromStart.put(ghostNode, 0d);
             heuristicDistToGoal.put(ghostNode, getShortestDist(ghostNode));
         } else {
             getTwoStartNodes(guider);
@@ -61,19 +62,20 @@ public class ShortestPathFinderA extends PathFinder {
 
         if (target.getGuider().getCurrentCell() instanceof Node) {
             pacmanOnNode = true;
-            targetNodes.add((Node) target.getGuider().getCurrentCell());
+            targetNode = (Node) target.getGuider().getCurrentCell();
         } else {
             pacmanOnNode = false;
             List<Node> closestNodes = target.getGuider().getClosestNodes();
-
-            for (Node node : closestNodes) {
-                targetNodes.add(node);
+            
+            targetNode = closestNodes.get(0);
+            if(getStraightLine(guider, targetNode) > getStraightLine(guider, closestNodes.get(1))) {
+                targetNode = closestNodes.get(1);
             }
         }
         
         while (!openSet.isEmpty()) {
             Node current = getMinimum();
-            if (targetNodes.contains(current)) {
+            if (targetNode == current) {
                 return current;
             }
             openSet.remove(current);
@@ -82,6 +84,14 @@ public class ShortestPathFinderA extends PathFinder {
         }
         
         return target.getGuider().getClosestNodes().get(0);
+    }
+    
+    private double getStraightLine(Guider guider, Node node) {
+        double xDist = Math.abs(node.getPositionX() - guider.getCurrentCell().getPositionX());
+        double yDist = Math.abs(node.getPositionY() - guider.getCurrentCell().getPositionY());
+        double distSquared = (Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        double dist = Math.sqrt(distSquared);
+        return dist;
     }
 
     private void findNewRoute(Node current) {
@@ -93,7 +103,7 @@ public class ShortestPathFinderA extends PathFinder {
                 continue;
             }
 
-            int tentativeDist = distFromStart.get(current) + getDistance(current, neighbor);
+            double tentativeDist = distFromStart.get(current) + getDistance(current, neighbor) - 1;
 
             if (!neighborSeen || tentativeDist < heuristicDistToGoal.get(neighbor)) {
                 cameFrom.put(neighbor, current);
@@ -103,7 +113,6 @@ public class ShortestPathFinderA extends PathFinder {
                     openSet.add(neighbor);
                 }
             }
-
         }
     }
 
@@ -123,17 +132,17 @@ public class ShortestPathFinderA extends PathFinder {
 
     private void getTwoStartNodes(Guider guider) {
         Node nodeA = guider.getClosestNodes().get(0);
-        distFromStart.put(nodeA, guider.distanceToNode(nodeA));
+        distFromStart.put(nodeA, (double) guider.distanceToNode(nodeA));
         heuristicDistToGoal.put(nodeA, guider.distanceToNode(nodeA) + getShortestDist(nodeA));
         Node nodeB = guider.getClosestNodes().get(1);
-        distFromStart.put(nodeB, guider.distanceToNode(nodeB));
+        distFromStart.put(nodeB, (double) guider.distanceToNode(nodeB));
         heuristicDistToGoal.put(nodeB, guider.distanceToNode(nodeB) + getShortestDist(nodeB));
 
         for (Node neighbor : getNeighbors(nodeA)) {
             if (neighbor != nodeB) {
                 openSet.add(neighbor);
                 cameFrom.put(neighbor, nodeA);
-                int distBetween = distFromStart.get(nodeA) + getDistance(nodeA, neighbor);
+                double distBetween = distFromStart.get(nodeA) + getDistance(nodeA, neighbor);
                 distFromStart.put(neighbor, distBetween);
                 heuristicDistToGoal.put(neighbor, distBetween + getShortestDist(neighbor));
             }
@@ -144,7 +153,7 @@ public class ShortestPathFinderA extends PathFinder {
             if (neighbor != nodeA) {
                 openSet.add(neighbor);
                 cameFrom.put(neighbor, nodeB);
-                int distBetween = distFromStart.get(nodeB) + getDistance(nodeB, neighbor);
+                double distBetween = distFromStart.get(nodeB) + getDistance(nodeB, neighbor);
                 distFromStart.put(neighbor, distBetween);
                 heuristicDistToGoal.put(neighbor, distBetween + getShortestDist(neighbor));
             }
@@ -164,10 +173,11 @@ public class ShortestPathFinderA extends PathFinder {
         return neighbors;
     }
 
-    private int getShortestDist(Node current) {
-        int xDist = Math.abs(current.getPositionX() - target.getGuider().getCurrentCell().getPositionX());
-        int yDist = Math.abs(current.getPositionY() - target.getGuider().getCurrentCell().getPositionY());
-        int dist = xDist + yDist;
+    private double getShortestDist(Node current) {
+        double xDist = Math.abs(current.getPositionX() - target.getGuider().getCurrentCell().getPositionX());
+        double yDist = Math.abs(current.getPositionY() - target.getGuider().getCurrentCell().getPositionY());
+        double distSquared = (Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        double dist = Math.sqrt(distSquared);
         return dist;
     }
 
@@ -185,47 +195,37 @@ public class ShortestPathFinderA extends PathFinder {
 
     @Override
     protected Direction getMove(Guider guider) {
-        boolean onSamePath = false;
-        
         if(guider instanceof PathGuide && target.getGuider() instanceof PathGuide) {
             if( ((PathGuide) guider).onSamePath(((PathGuide) target.getGuider())) ) {
-                onSamePath = true;
                 return checkPathNonOnNode(guider);
             }
         } else if (guider instanceof PathGuide && target.getGuider() instanceof Node) {
             if( ((Node) target.getGuider()).getPaths().contains(((PathGuide) guider).getPath()) ) {
-                onSamePath = true;
                 return checkPathPacmanOnNode(guider);
             }
         } else if (guider instanceof Node && target.getGuider() instanceof PathGuide) {
             if( ((Node) guider).getPaths().contains(((PathGuide) target.getGuider()).getPath()) ) {
-                onSamePath = true;
                 return checkPathGhostOnNode(guider);
             }
         } else {
             for(Path path : ((Node) target.getGuider()).getPaths()) {
                 if( ((Node) guider).getPaths().contains(path) ) {
-                    onSamePath = true;
                     return checkPathBothOnNodes(guider);
                 }
             }   
         }
         
-        if(!onSamePath) {
-            Node targetNode = execute(guider);
-            PathingWrapper bestPath = getPath(targetNode);
-            
-            Node nextNode;
-            if (bestPath.getNodes().get(0) == guider.getCurrentCell()) {
-                nextNode = bestPath.getNodes().get(1);
-            } else {
-                nextNode = bestPath.getNodes().get(0);
-            }
+        Node endNode = execute(guider);
+        bestPath = getPath(endNode);
 
-            return guider.getDirectionOfNode(nextNode);
+        Node nextNode;
+        if (bestPath.getNodes().get(0) == guider.getCurrentCell()) {
+            nextNode = bestPath.getNodes().get(1);
+        } else {
+            nextNode = bestPath.getNodes().get(0);
         }
-        
-        return null;
+
+        return guider.getDirectionOfNode(nextNode);
     }
     
     private Direction checkPathBothOnNodes(Guider guider) {
@@ -237,12 +237,17 @@ public class ShortestPathFinderA extends PathFinder {
         Node nodeA = closestNodes.get(0);
         int distPacmanToNodeA = target.getGuider().distanceToNode(nodeA);
         int distGhostToNodeA = guider.distanceToNode(nodeA);
+        Node nodeB = closestNodes.get(0);
+        int distPacmanToNodeB = target.getGuider().distanceToNode(nodeB);
+        int distGhostToNodeB = guider.distanceToNode(nodeB);
         
         if(distPacmanToNodeA < distGhostToNodeA) {
             return guider.getDirectionOfNode(nodeA);
-        } else {
-            return guider.getDirectionOfNode(nodeA).inverse();
+        } else if(distPacmanToNodeB < distGhostToNodeB) {
+            return guider.getDirectionOfNode(nodeB);
         } 
+        
+        return null;
     }
     
     private Direction checkPathGhostOnNode(Guider guider) {
@@ -252,7 +257,6 @@ public class ShortestPathFinderA extends PathFinder {
                 pacmanPath = path;
             }
         }
-        
         return ((Node) guider).getPathDirection(pacmanPath);
     }
     
