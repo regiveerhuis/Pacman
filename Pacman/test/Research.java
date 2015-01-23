@@ -47,7 +47,8 @@ import org.junit.*;
 
 *protip: dont put the testMapLoc on 61...
 *I hope I can push this before I go to bed.
-
+*after some calculations, I've figured that thats gonna be a no.
+*900 nodes, 7E7 nanoSeconds per route, 100 routes per node, equals 6e12 nanoseconds or 6000 seconds -.-
 */
 /**
  *
