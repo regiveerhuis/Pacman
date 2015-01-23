@@ -40,6 +40,14 @@ import org.junit.*;
 *the test logs the average calc time in the map resultDijkstra/resultAStar
 *the test also logs the best distance in the map bestDijkstra/bestAstar
 *for the location test the startlocation is also logged.
+
+*it writes the results to CSV files in the pacman folder
+*you should be able to import it in an excel.
+*the column seperator is a comma, the row seperator is a newline if it asks.
+
+*protip: dont put the testMapLoc on 61...
+*I hope I can push this before I go to bed.
+
 */
 /**
  *
