@@ -49,6 +49,7 @@ import org.junit.*;
 *I hope I can push this before I go to bed.
 *after some calculations, I've figured that thats gonna be a no.
 *900 nodes, 7E7 nanoSeconds per route, 100 routes per node, equals 6e12 nanoseconds or 6000 seconds -.-
+*31 takes bout 3 minutes
 */
 /**
  *
@@ -61,7 +62,7 @@ public class Research {
 
     }
 
-    @Test
+    //@Test
     public void testMapSize() {
         int minTestSize = 5; //testSizes must be odd;
         int maxTestSize = 61;
@@ -122,7 +123,7 @@ public class Research {
     @Test
     public void testMapLocation() {
         System.out.println("testMapLoc");
-        int mapSize = 61; //must be an odd number
+        int mapSize = 31; //must be an odd number
         int smoothness = 100;
         HashMap<Integer, int[]> testLocations = new HashMap();
         HashMap<Integer, Double> resultsDijkstra = new HashMap();
@@ -136,7 +137,9 @@ public class Research {
         MockPlayGround playGround = new MockPlayGround(data);
         Guider toPos = playGround.getNodeAt(playGround.getSize() - 2, playGround.getSize() - 2);
         System.out.println(playGround.getSize()-2);
+        System.out.println(playGround.getNodes().size());
         for (Node node : playGround.getNodes()) {
+            System.out.println(i);
             Guider startPos;
             if (node != toPos) {
                 startPos = node;
