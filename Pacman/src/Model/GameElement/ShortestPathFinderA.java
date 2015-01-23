@@ -11,6 +11,7 @@ import Model.Cell.TraversableCell;
 import Model.Direction;
 import Model.PlayGround;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,11 +33,47 @@ public class ShortestPathFinderA extends PathFinder {
     private Node targetNode;
     private PathingWrapper bestPath;
 
-    public ShortestPathFinderA(PathingTarget target, PlayGround playGround) {
+    public ShortestPathFinderA(PathingTarget target, Collection<Path> paths) {
         super(target);
-        this.paths = new ArrayList(playGround.getPaths());
+        this.paths = new ArrayList(paths);
     }
 
+    //method made for research
+    @Override
+    public double getBestDistance(Guider guider){
+          if(guider instanceof PathGuide && getTarget().getGuider() instanceof PathGuide) {
+            if( ((PathGuide) guider).onSamePath(((PathGuide) getTarget().getGuider())) ) {
+                return 0;
+            }
+        } else if (guider instanceof PathGuide && getTarget().getGuider() instanceof Node) {
+            if( ((Node) getTarget().getGuider()).getPaths().contains(((PathGuide) guider).getPath()) ) {
+                return 1;
+            }
+        } else if (guider instanceof Node && getTarget().getGuider() instanceof PathGuide) {
+            if( ((Node) guider).getPaths().contains(((PathGuide) getTarget().getGuider()).getPath()) ) {
+                return 1;
+            }
+        } else {
+            for(Path path : ((Node) getTarget().getGuider()).getPaths()) {
+                if( ((Node) guider).getPaths().contains(path) ) {
+                    return path.getLength()-1;
+                }
+            }   
+        }
+        
+        Node endNode = execute(guider);
+        bestPath = getPath(endNode);
+
+        Node nextNode;
+        if (bestPath.getNodes().get(0) == guider.getCurrentCell()) {
+            nextNode = bestPath.getNodes().get(1);
+        } else {
+            nextNode = bestPath.getNodes().get(0);
+        }
+
+        return distFromStart.get(endNode);
+    }
+    
     private Node execute(Guider guider) {
         closedSet = new HashSet();
         openSet = new HashSet();
@@ -215,7 +252,7 @@ public class ShortestPathFinderA extends PathFinder {
         }
 
         return guider.getDirectionOfNode(nextNode);
-    }
+    }    
     
     private Direction checkPathBothOnNodes(Guider guider) {
         return ((Node) guider).getDirectionOfNode((Node) getTarget().getGuider());
@@ -256,7 +293,6 @@ public class ShortestPathFinderA extends PathFinder {
     private PathingWrapper getPath(Node targetNode) {
         PathingWrapper pathingWrapper = new PathingWrapper();
         Node step = targetNode;
-        // check if a path exists
 
         pathingWrapper.add(step);
         while (cameFrom.get(step) != null) {
@@ -271,7 +307,7 @@ public class ShortestPathFinderA extends PathFinder {
     private class PathingWrapper {
 
         private ArrayList<Node> nodes = new ArrayList();
-
+        
         public void add(Node node) {
             nodes.add(node);
         }

@@ -58,6 +58,11 @@ public abstract class PathFinder {
             }
         }
     }
+    
+    //method made for research
+    public double getBestDistance(Guider guider){
+        return 0;
+    }
 
     protected abstract Direction getMove(Guider guider);
 }
