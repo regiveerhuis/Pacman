@@ -1,3 +1,5 @@
+package ResearchTests;
+
 
 import Model.Cell.Guider;
 import Model.GameElement.PathingTarget;
