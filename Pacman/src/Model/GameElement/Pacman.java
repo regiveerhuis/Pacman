@@ -94,6 +94,7 @@ public class Pacman extends MovingElement implements DirectionEventListener, Pat
             if (invincible) {
                 System.out.println("be eaten");
                 mover.die();
+                addPoints(200);
                 return new GameElementDeathEvent(mover);
             } else {
                 System.out.println("be dyin");
