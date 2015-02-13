@@ -228,7 +228,7 @@ public class ShortestPathFinderA extends PathFinder {
         } else if (guider instanceof PathGuide && getTarget().getGuider() instanceof Node) {
             if( ((Node) getTarget().getGuider()).getPaths().contains(((PathGuide) guider).getPath()) ) {
                 return checkPathPacmanOnNode(guider);
-            }
+            }   
         } else if (guider instanceof Node && getTarget().getGuider() instanceof PathGuide) {
             if( ((Node) guider).getPaths().contains(((PathGuide) getTarget().getGuider()).getPath()) ) {
                 return checkPathGhostOnNode(guider);
@@ -277,13 +277,7 @@ public class ShortestPathFinderA extends PathFinder {
     }
     
     private Direction checkPathGhostOnNode(Guider guider) {
-        Path pacmanPath = null;
-        for(Path path : ((Node) guider).getPaths()) {
-            if( ((PathGuide) getTarget().getGuider()).getPath() == path) {
-                pacmanPath = path;
-            }
-        }
-        return ((Node) guider).getPathDirection(pacmanPath);
+        return ((Node) guider).getPathDirection(((PathGuide) getTarget().getGuider()).getPath());
     }
     
     private Direction checkPathPacmanOnNode(Guider guider) {
